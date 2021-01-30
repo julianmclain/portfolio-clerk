@@ -2,7 +2,12 @@
 
 ## Notes
 
-https://docs.google.com/spreadsheets/d/13GF2Gzw_8LsAAUDosaONqqCxfBoNfEJY/edit#gid=1622810545
+The goal is to replace spreadsheets like this one: https://docs.google.
+com/spreadsheets/d/13GF2Gzw_8LsAAUDosaONqqCxfBoNfEJY/edit#gid=1622810545
+
+### Money
+
+- tips for dealing with money http://www.yacoset.com/how-to-handle-currency-conversions
 
 ## Functionality
 v1
@@ -10,13 +15,14 @@ v1
 - [ ] ability to make a deposit
 - [ ] ability to make a transaction
 - [ ] calculate daily portfolio snapshots
+
+- add timestamps to all models, e.g.
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
  
 v2
 - [ ] define a few reference assets (thinking $SPY, BTC, and 1 other)
 - [ ] calculate daily reference asset snapshots
-
-probably need a join table like 'portfolio_reference_comparison' with records that store things like the alpha, 
-excess return amount, excess return percent for each reference asset
 
 v3
 - integrations: make it easy to do deposits and transactions (e.g. forward a buy / sell confirmation email to an 
@@ -27,5 +33,4 @@ v4
 
 ## TODO
 
-- research how to handle floating point values (e.g. prices, share quantities, etc...) http://www.yacoset.com/how-to-handle-currency-conversions
 - setup docker-compose for postgres 

@@ -5,7 +5,7 @@ import play.api.libs.json.OFormat
 
 case class User(
     id: Long,
-    email: Long
+    email: String
 )
 
 object User {

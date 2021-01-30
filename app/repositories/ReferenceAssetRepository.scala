@@ -11,7 +11,7 @@ import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class ReferenceAssetRepository @Inject() (
+final class ReferenceAssetRepository @Inject() (
     dbConfigProvider: DatabaseConfigProvider
 )(implicit
     ec: ExecutionContext
@@ -28,6 +28,9 @@ class ReferenceAssetRepository @Inject() (
     def symbol: Rep[String] = column[String]("symbol")
 
     def * : ProvenShape[ReferenceAsset] =
-      (id, name, symbol).mapTo[ReferenceAsset]
+      (id, name, symbol) <> (
+        (ReferenceAsset.apply _).tupled,
+        ReferenceAsset.unapply
+      )
   }
 }

@@ -10,7 +10,7 @@ case object Option extends AssetType
 
 case class Transaction(
     id: Long,
-    assetType: AssetType,
+    assetType: String, // TODO make AssetType
     assetName: String,
     assetSymbol: String,
     quantity: Int,

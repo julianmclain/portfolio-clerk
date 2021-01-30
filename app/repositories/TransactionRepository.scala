@@ -11,7 +11,7 @@ import models.Transaction
 import models.AssetType
 
 @Singleton
-class TransactionRepository @Inject() (
+final class TransactionRepository @Inject() (
     dbConfigProvider: DatabaseConfigProvider
 )(implicit
     ec: ExecutionContext
@@ -24,8 +24,8 @@ class TransactionRepository @Inject() (
   private class TransactionTable(tag: Tag)
       extends Table[Transaction](tag, "transactions") {
     def id: Rep[Long] = column[Long]("id", O.PrimaryKey, O.AutoInc)
-    def assetType: Rep[AssetType] =
-      column[AssetType]("asset_type") // TODO - figure out how to save to DB
+    def assetType: Rep[String] =
+      column[String]("asset_type") // TODO - figure out how to save to DB
     def assetName: Rep[String] = column[String]("asset_name")
     def assetTickerSymbol: Rep[String] = column[String]("asset_ticker_symbol")
     def quantity: Rep[Int] = column[Int]("quantity")
@@ -39,6 +39,6 @@ class TransactionRepository @Inject() (
         assetTickerSymbol,
         quantity,
         unitPrice
-      ).mapTo[Transaction]
+      ) <> ((Transaction.apply _).tupled, Transaction.unapply)
   }
 }

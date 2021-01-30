@@ -11,8 +11,10 @@ import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class PortfolioRepository @Inject() (dbConfigProvider: DatabaseConfigProvider)(
-    implicit ec: ExecutionContext
+final class PortfolioRepository @Inject() (
+    dbConfigProvider: DatabaseConfigProvider
+)(implicit
+    ec: ExecutionContext
 ) {
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
 
@@ -22,8 +24,22 @@ class PortfolioRepository @Inject() (dbConfigProvider: DatabaseConfigProvider)(
   private class PortfolioTable(tag: Tag)
       extends Table[Portfolio](tag, "portfolios") {
     def id: Rep[Long] = column[Long]("id", O.PrimaryKey, O.AutoInc)
-    def userId: Rep[Long] = column[Long]("user_id") // add foreign key
+    def userId: Rep[Long] = column[Long]("user_id")
 
-    def * : ProvenShape[Portfolio] = (id, userId).mapTo[Portfolio]
+    def * : ProvenShape[Portfolio] =
+      (id, userId) <> ((Portfolio.apply _).tupled, Portfolio.unapply)
+  }
+
+  private val portfolios = TableQuery[PortfolioTable]
+
+  def findById(id: Long): Future[Option[Portfolio]] =
+    db.run(portfolios.filter(_.id === id).result.headOption)
+
+  def create(portfolio: Portfolio): Future[Portfolio] = {
+    val insertQuery = portfolios returning portfolios.map(_.id) into ((_, id) =>
+      portfolio.copy(id = id)
+    )
+    val action = insertQuery += portfolio
+    db.run(action)
   }
 }

@@ -11,7 +11,7 @@ import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class UserRepository @Inject() (dbConfigProvider: DatabaseConfigProvider)(
+final class UserRepository @Inject() (dbConfigProvider: DatabaseConfigProvider)(
     implicit ec: ExecutionContext
 ) {
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
@@ -23,6 +23,19 @@ class UserRepository @Inject() (dbConfigProvider: DatabaseConfigProvider)(
     def id: Rep[Long] = column[Long]("id", O.PrimaryKey, O.AutoInc)
     def email: Rep[String] = column[String]("email")
 
-    def * : ProvenShape[User] = (id, email).mapTo[User]
+    def * : ProvenShape[User] =
+      (id, email) <> ((User.apply _).tupled, User.unapply)
+  }
+
+  private val users = TableQuery[UserTable]
+
+  def findById(id: Long): Future[Option[User]] =
+    db.run(users.filter(_.id === id).result.headOption)
+
+  def create(user: User): Future[User] = {
+    val insertQuery =
+      users returning users.map(_.id) into ((_, id) => user.copy(id = id))
+    val action = insertQuery += user
+    db.run(action)
   }
 }

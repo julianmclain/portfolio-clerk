@@ -5,16 +5,15 @@ import play.api.libs.json.OFormat
 
 case class PortfolioSnapshot(
     id: Long,
-    date: String,
     openingShareCount: Long,
     openingSharePrice: Long,
     openingValue: Long,
     netCashFlows: Long,
     cashFlowSharePrice: Long,
     numShareChange: Long,
-    closingValue: Long,
-    closingShares: Long,
+    closingShareCount: Long,
     closingSharePrice: Long,
+    closingValue: Long,
     netReturnPercentage: Long
 )
 

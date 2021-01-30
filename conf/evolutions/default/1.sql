@@ -2,15 +2,24 @@
 
 # --- !Ups
 
-create table "photos" (
-    "id" bigint,
-    "title" varchar not null,
-    "caption" varchar,
-    "image_url" varchar not null,
-    "album_id" varchar not null,
-    "created_by" varchar not null
+CREATE TABLE users (
+    id BIGSERIAL PRIMARY KEY,
+    email VARCHAR(255) NOT NULL
 );
+
+CREATE TABLE portfolios (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL REFERENCES users(id)
+);
+
+CREATE TABLE deposits (
+    id BIGSERIAL PRIMARY KEY,
+    amount VARCHAR(510) NOT NULL,
+    portfolio_id BIGINT NOT NULL REFERENCES portfolios(id)
+)
 
 # --- !Downs
 
-drop table photos;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS deposits;
+DROP TABLE IF EXISTS portfolios;
