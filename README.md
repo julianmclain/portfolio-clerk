@@ -27,4 +27,5 @@ v4
 
 ## TODO
 
-- research how to handle floating point values (e.g. prices, share quantities, etc...)
+- research how to handle floating point values (e.g. prices, share quantities, etc...) http://www.yacoset.com/how-to-handle-currency-conversions
+- setup docker-compose for postgres 
