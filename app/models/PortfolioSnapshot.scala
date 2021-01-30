@@ -1,20 +1,23 @@
 package models
 
+import java.time.LocalDate
 import play.api.libs.json.Json
 import play.api.libs.json.OFormat
 
 case class PortfolioSnapshot(
     id: Long,
-    openingShareCount: Long,
-    openingSharePrice: Long,
-    openingValue: Long,
-    netCashFlows: Long,
-    cashFlowSharePrice: Long,
-    numShareChange: Long,
-    closingShareCount: Long,
-    closingSharePrice: Long,
-    closingValue: Long,
-    netReturnPercentage: Long
+    portfolioId: Long,
+    openingShareCount: BigDecimal,
+    openingSharePrice: MoneyWrapper,
+    openingValue: MoneyWrapper,
+    netCashFlow: MoneyWrapper,
+    cashFlowSharePrice: MoneyWrapper,
+    numShareChange: BigDecimal,
+    closingShareCount: BigDecimal,
+    closingSharePrice: MoneyWrapper,
+    closingValue: MoneyWrapper,
+    netReturn: BigDecimal,
+    date: LocalDate
 )
 
 object PortfolioSnapshot {

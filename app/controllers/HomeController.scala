@@ -1,17 +1,20 @@
 package controllers
 
 import models.Deposit
+import models.MoneyWrapper
 import models.Portfolio
+import models.PortfolioSnapshot
 import models.User
-import org.joda.money.Money
 
 import javax.inject._
 import play.api.mvc.BaseController
 import play.api.mvc._
 import repositories.DepositRepository
 import repositories.PortfolioRepository
+import repositories.PortfolioSnapshotRepository
 import repositories.UserRepository
 
+import java.time.LocalDate
 import scala.concurrent.ExecutionContext
 
 /**
@@ -23,7 +26,8 @@ class HomeController @Inject() (
     val controllerComponents: ControllerComponents,
     val userRepo: UserRepository,
     val portfolioRepo: PortfolioRepository,
-    val depositRepo: DepositRepository
+    val depositRepo: DepositRepository,
+    val portfolioSnapshotRepo: PortfolioSnapshotRepository
 )(implicit ec: ExecutionContext)
     extends BaseController {
 
@@ -36,12 +40,29 @@ class HomeController @Inject() (
     */
   def index() =
     Action { implicit request: Request[AnyContent] =>
-      val d = for {
+      val ps = for {
         u <- userRepo.create(User(0, "hi@aol.com"))
         p <- portfolioRepo.create(Portfolio(0, u.id))
-        d <- depositRepo.create(Deposit(0, Money.parse("USD 23.87"), p.id))
-      } yield d
-      d.map(println)
+        d <- depositRepo.create(Deposit(0, MoneyWrapper("USD 23.87"), p.id))
+        ps <- portfolioSnapshotRepo.create(
+          PortfolioSnapshot(
+            id = 0,
+            portfolioId = p.id,
+            openingShareCount = BigDecimal(1),
+            openingSharePrice = MoneyWrapper("USD 23.87"),
+            openingValue = MoneyWrapper("USD 23.87"),
+            netCashFlow = MoneyWrapper("USD 23.87"),
+            cashFlowSharePrice = MoneyWrapper("USD 23.87"),
+            numShareChange = BigDecimal(1),
+            closingShareCount = BigDecimal(1),
+            closingSharePrice = MoneyWrapper("USD 23.87"),
+            closingValue = MoneyWrapper("USD 23.87"),
+            netReturn = BigDecimal(1),
+            date = LocalDate.parse("2007-12-03")
+          )
+        )
+      } yield ps
+      ps.map(println)
       Ok(views.html.index())
     }
 }

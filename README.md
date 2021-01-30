@@ -5,8 +5,7 @@
 The goal is to replace spreadsheets like this one: https://docs.google.
 com/spreadsheets/d/13GF2Gzw_8LsAAUDosaONqqCxfBoNfEJY/edit#gid=1622810545
 
-### Money
-
+Money
 - tips for dealing with money http://www.yacoset.com/how-to-handle-currency-conversions
 
 ## Functionality

@@ -1,7 +1,7 @@
 package repositories
 
 import models.Deposit
-import org.joda.money.Money
+import models.MoneyWrapper
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 import slick.lifted.ProvenShape
@@ -25,7 +25,7 @@ final class DepositRepository @Inject() (
 
   private class DepositTable(tag: Tag) extends Table[Deposit](tag, "deposits") {
     def id: Rep[Long] = column[Long]("id", O.PrimaryKey, O.AutoInc)
-    def amount: Rep[Money] = column[Money]("amount")
+    def amount: Rep[MoneyWrapper] = column[MoneyWrapper]("amount")
     def portfolioId: Rep[Long] = column[Long]("portfolio_id")
 
     def * : ProvenShape[Deposit] =

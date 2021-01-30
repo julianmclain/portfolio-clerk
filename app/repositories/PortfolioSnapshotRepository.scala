@@ -1,12 +1,15 @@
 package repositories
 
+import models.MoneyWrapper
 import play.api.db.slick.DatabaseConfigProvider
+
 import javax.inject.Inject
 import javax.inject.Singleton
 import slick.jdbc.JdbcProfile
 import slick.lifted.ProvenShape
 import models.PortfolioSnapshot
 
+import java.time.LocalDate
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
 
@@ -20,37 +23,63 @@ final class PortfolioSnapshotRepository @Inject() (
 
   import dbConfig._
   import profile.api._
+  import CustomColumnTypes.moneyTypeMapper
 
   private class PortfolioSnapshotTable(tag: Tag)
       extends Table[PortfolioSnapshot](tag, "portfolio_snapshots") {
     def id: Rep[Long] = column[Long]("id", O.PrimaryKey, O.AutoInc)
-    def openingShareCount: Rep[Long] = column[Long]("opening_share_count")
-    def openingSharePrice: Rep[Long] = column[Long]("opening_share_price")
-    def openingValue: Rep[Long] = column[Long]("opening_value")
-    def netCashFlows: Rep[Long] = column[Long]("net_cash_flows")
-    def cashFlowSharePrice: Rep[Long] = column[Long]("cash_flow_share_price")
-    def numShareChange: Rep[Long] = column[Long]("num_share_change")
-    def closingShareCount: Rep[Long] = column[Long]("closing_share_count")
-    def closingSharePrice: Rep[Long] = column[Long]("closing_share_price")
-    def closingValue: Rep[Long] = column[Long]("closing_value")
-    def netReturnPercentage: Rep[Long] = column[Long]("net_return_percentage")
+    def portfolioId: Rep[Long] = column[Long]("portfolio_id")
+    def openingShareCount: Rep[BigDecimal] =
+      column[BigDecimal]("opening_share_count")
+    def openingSharePrice: Rep[MoneyWrapper] =
+      column[MoneyWrapper]("opening_share_price")
+    def openingValue: Rep[MoneyWrapper] = column[MoneyWrapper]("opening_value")
+    def netCashFlow: Rep[MoneyWrapper] = column[MoneyWrapper]("net_cash_flow")
+    def cashFlowSharePrice: Rep[MoneyWrapper] =
+      column[MoneyWrapper]("cash_flow_share_price")
+    def numShareChange: Rep[BigDecimal] = column[BigDecimal]("num_share_change")
+    def closingShareCount: Rep[BigDecimal] =
+      column[BigDecimal]("closing_share_count")
+    def closingSharePrice: Rep[MoneyWrapper] =
+      column[MoneyWrapper]("closing_share_price")
+    def closingValue: Rep[MoneyWrapper] = column[MoneyWrapper]("closing_value")
+    def netReturn: Rep[BigDecimal] = column[BigDecimal]("net_return")
+    def date: Rep[LocalDate] = column[LocalDate]("date")
 
     def * : ProvenShape[PortfolioSnapshot] =
       (
         id,
+        portfolioId,
         openingShareCount,
         openingSharePrice,
         openingValue,
-        netCashFlows,
+        netCashFlow,
         cashFlowSharePrice,
         numShareChange,
         closingShareCount,
         closingSharePrice,
         closingValue,
-        netReturnPercentage
+        netReturn,
+        date
       ) <> (
         (PortfolioSnapshot.apply _).tupled,
         PortfolioSnapshot.unapply
       )
+  }
+
+  private val portfolioSnapshots = TableQuery[PortfolioSnapshotTable]
+
+  def findById(id: Long): Future[Option[PortfolioSnapshot]] =
+    db.run(portfolioSnapshots.filter(_.id === id).result.headOption)
+
+  def create(
+      portfolioSnapshot: PortfolioSnapshot
+  ): Future[PortfolioSnapshot] = {
+    val insertQuery =
+      portfolioSnapshots returning portfolioSnapshots.map(_.id) into ((_, id) =>
+        portfolioSnapshot.copy(id = id)
+      )
+    val action = insertQuery += portfolioSnapshot
+    db.run(action)
   }
 }
