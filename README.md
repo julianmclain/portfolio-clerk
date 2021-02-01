@@ -12,8 +12,7 @@ of cash flows.
 
 [Source](https://www.retailinvestor.org/PortfolioReturnCalc.pdf)
 
-Solution - The goal is to replace spreadsheets like [this](https://docs.google.
-com/spreadsheets/d/13GF2Gzw_8LsAAUDosaONqqCxfBoNfEJY/edit#gid=1622810545)
+Solution - The goal is to replace spreadsheets like [this](https://docs.google.com/spreadsheets/d/13GF2Gzw_8LsAAUDosaONqqCxfBoNfEJY/edit#gid=1622810545)
 
 ## Functionality
 v1
