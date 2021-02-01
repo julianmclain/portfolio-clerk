@@ -5,8 +5,8 @@
 Calculating your portfolio's rate of return is easy unless there are cash inflows / outflows during the period. If 
 that's the case, you have to use a method that accounts for the time value of money.
 
-Brokerages show portfolio returns using an Internal Rate of Return calculation (Vanguard for example calls it out [here](https://personal.vanguard.
-com/us/content/MyPortfolio/performance/LMperfSummaryInfoContent.jsp) under __Calculation method__. This isn't a metric 
+Brokerages show portfolio returns using an Internal Rate of Return calculation (Vanguard for example calls it out
+[here](https://personal.vanguard.com/us/content/MyPortfolio/performance/LMperfSummaryInfoContent.jsp) under __Calculation method__. This isn't a metric 
 that you can compare against the performance of other benchmarks. You need to use a method that removes the effect 
 of cash flows. 
 
@@ -14,8 +14,7 @@ of cash flows.
 
 The solution:
 
-The goal is to replace spreadsheets like this one: https://docs.google.
-com/spreadsheets/d/13GF2Gzw_8LsAAUDosaONqqCxfBoNfEJY/edit#gid=1622810545
+The goal is to replace spreadsheets like [this](https://docs.google.com/spreadsheets/d/13GF2Gzw_8LsAAUDosaONqqCxfBoNfEJY/edit#gid=1622810545)
 
 ## Functionality
 v1
