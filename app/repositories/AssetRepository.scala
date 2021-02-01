@@ -1,5 +1,8 @@
 package repositories
 
+import models.Asset
+import models.AssetType
+import models.MoneyWrapper
 import play.api.db.slick.DatabaseConfigProvider
 
 import javax.inject.Inject
@@ -9,12 +12,9 @@ import slick.lifted.ProvenShape
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
-import models.Transaction
-import models.AssetType
-import models.MoneyWrapper
 
 @Singleton
-final class TransactionRepository @Inject() (
+final class AssetRepository @Inject() (
     dbConfigProvider: DatabaseConfigProvider
 )(implicit
     ec: ExecutionContext
@@ -23,25 +23,22 @@ final class TransactionRepository @Inject() (
 
   import dbConfig._
   import profile.api._
-  import CustomColumnTypes.assetTypeMapper
   import CustomColumnTypes.moneyMapper
+  import CustomColumnTypes.assetTypeMapper
 
-  private class TransactionTable(tag: Tag)
-      extends Table[Transaction](tag, "transactions") {
+  private class AssetTable(tag: Tag) extends Table[Asset](tag, "assets") {
     def id: Rep[Long] = column[Long]("id", O.PrimaryKey, O.AutoInc)
-    def assetId: Rep[Long] = column[Long]("asset_id")
     def portfolioId: Rep[Long] = column[Long]("portfolio_id")
     def assetName: Rep[String] = column[String]("asset_name")
     def assetSymbol: Rep[String] = column[String]("asset_symbol")
     def assetType: Rep[AssetType] = column[AssetType]("asset_type")
-    def quantity: Rep[Int] = column[Int]("quantity")
+    def quantity: Rep[BigDecimal] = column[BigDecimal]("quantity")
     def unitPrice: Rep[MoneyWrapper] = column[MoneyWrapper]("unit_price")
     def totalValue: Rep[MoneyWrapper] = column[MoneyWrapper]("total_value")
 
-    def * : ProvenShape[Transaction] =
+    def * : ProvenShape[Asset] =
       (
         id,
-        assetId,
         portfolioId,
         assetName,
         assetSymbol,
@@ -49,6 +46,18 @@ final class TransactionRepository @Inject() (
         quantity,
         unitPrice,
         totalValue
-      ) <> ((Transaction.apply _).tupled, Transaction.unapply)
+      ) <> ((Asset.apply _).tupled, Asset.unapply)
+  }
+
+  private val assets = TableQuery[AssetTable]
+
+  def findById(id: Long): Future[Option[Asset]] =
+    db.run(assets.filter(_.id === id).result.headOption)
+
+  def create(asset: Asset): Future[Asset] = {
+    val insertQuery =
+      assets returning assets.map(_.id) into ((_, id) => asset.copy(id = id))
+    val action = insertQuery += asset
+    db.run(action)
   }
 }

@@ -3,21 +3,20 @@ package models
 import play.api.libs.json.Json
 import play.api.libs.json.OFormat
 
-sealed trait AssetType
-case object Stock extends AssetType
-case object Bond extends AssetType
-case object Option extends AssetType
-
 case class Transaction(
     id: Long,
-    assetType: String, // TODO make AssetType
+    assetId: Long,
+    portfolioId: Long,
     assetName: String,
     assetSymbol: String,
+    assetType: AssetType,
     quantity: Int,
-    unitPriceCent: Long
+    unitPrice: MoneyWrapper,
+    totalValue: MoneyWrapper
 )
 
-object Transaction {
-  implicit val transactionFormat: OFormat[Transaction] =
-    Json.format[Transaction]
-}
+// TODO - need to fix json serialization for AssetType first
+//object Transaction {
+//  implicit val transactionFormat: OFormat[Transaction] =
+//    Json.format[Transaction]
+//}

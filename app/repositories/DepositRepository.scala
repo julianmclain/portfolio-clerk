@@ -21,15 +21,19 @@ final class DepositRepository @Inject() (
 
   import dbConfig._
   import profile.api._
-  import repositories.CustomColumnTypes.moneyTypeMapper
+  import repositories.CustomColumnTypes.moneyMapper
 
   private class DepositTable(tag: Tag) extends Table[Deposit](tag, "deposits") {
     def id: Rep[Long] = column[Long]("id", O.PrimaryKey, O.AutoInc)
-    def amount: Rep[MoneyWrapper] = column[MoneyWrapper]("amount")
+    def totalAmount: Rep[MoneyWrapper] = column[MoneyWrapper]("total_amount")
     def portfolioId: Rep[Long] = column[Long]("portfolio_id")
 
     def * : ProvenShape[Deposit] =
-      (id, amount, portfolioId) <> ((Deposit.apply _).tupled, Deposit.unapply)
+      (
+        id,
+        totalAmount,
+        portfolioId
+      ) <> ((Deposit.apply _).tupled, Deposit.unapply)
   }
 
   private val deposits = TableQuery[DepositTable]

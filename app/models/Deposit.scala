@@ -5,7 +5,7 @@ import play.api.libs.json.OFormat
 
 case class Deposit(
     id: Long,
-    amount: MoneyWrapper,
+    totalAmount: MoneyWrapper,
     portfolioId: Long
 )
 

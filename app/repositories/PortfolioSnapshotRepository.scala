@@ -23,7 +23,7 @@ final class PortfolioSnapshotRepository @Inject() (
 
   import dbConfig._
   import profile.api._
-  import CustomColumnTypes.moneyTypeMapper
+  import CustomColumnTypes.moneyMapper
 
   private class PortfolioSnapshotTable(tag: Tag)
       extends Table[PortfolioSnapshot](tag, "portfolio_snapshots") {

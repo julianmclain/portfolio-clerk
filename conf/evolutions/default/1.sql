@@ -4,18 +4,21 @@
 
 CREATE TABLE users (
     id BIGSERIAL PRIMARY KEY,
-    email VARCHAR(255) NOT NULL
+    email VARCHAR(510) NOT NULL
 );
 
 CREATE TABLE portfolios (
     id BIGSERIAL PRIMARY KEY,
-    user_id BIGINT NOT NULL REFERENCES users(id)
+    user_id BIGINT NOT NULL REFERENCES users(id),
+    share_count NUMERIC,
+    share_price VARCHAR(510),
+    total_value VARCHAR(510)
 );
 
 CREATE TABLE deposits (
     id BIGSERIAL PRIMARY KEY,
     portfolio_id BIGINT NOT NULL REFERENCES portfolios(id),
-    amount VARCHAR(510) NOT NULL
+    total_amount VARCHAR(510) NOT NULL
 );
 
 CREATE TABLE portfolio_snapshots (
@@ -34,9 +37,21 @@ CREATE TABLE portfolio_snapshots (
     date DATE
 );
 
+CREATE TABLE assets (
+    id BIGSERIAL PRIMARY KEY,
+    portfolio_id BIGINT NOT NULL REFERENCES portfolios(id),
+    asset_name VARCHAR(510),
+    asset_symbol VARCHAR(510),
+    asset_type VARCHAR(510),
+    quantity NUMERIC,
+    unit_price VARCHAR(510),
+    total_value VARCHAR(510)
+);
+
 # --- !Downs
 
-DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS deposits;
-DROP TABLE IF EXISTS portfolios;
+DROP TABLE IF EXISTS assets;
 DROP TABLE IF EXISTS portfolio_snapshots;
+DROP TABLE IF EXISTS portfolios;
+DROP TABLE IF EXISTS users;

@@ -1,6 +1,8 @@
 package repositories
 
+import models.MoneyWrapper
 import play.api.db.slick.DatabaseConfigProvider
+
 import javax.inject.Inject
 import javax.inject.Singleton
 import slick.jdbc.JdbcProfile
@@ -20,14 +22,24 @@ final class PortfolioRepository @Inject() (
 
   import dbConfig._
   import profile.api._
+  import CustomColumnTypes.moneyMapper
 
   private class PortfolioTable(tag: Tag)
       extends Table[Portfolio](tag, "portfolios") {
     def id: Rep[Long] = column[Long]("id", O.PrimaryKey, O.AutoInc)
     def userId: Rep[Long] = column[Long]("user_id")
+    def shareCount: Rep[BigDecimal] = column[BigDecimal]("share_count")
+    def sharePrice: Rep[MoneyWrapper] = column[MoneyWrapper]("share_price")
+    def totalValue: Rep[MoneyWrapper] = column[MoneyWrapper]("total_value")
 
     def * : ProvenShape[Portfolio] =
-      (id, userId) <> ((Portfolio.apply _).tupled, Portfolio.unapply)
+      (
+        id,
+        userId,
+        shareCount,
+        sharePrice,
+        totalValue
+      ) <> ((Portfolio.apply _).tupled, Portfolio.unapply)
   }
 
   private val portfolios = TableQuery[PortfolioTable]
