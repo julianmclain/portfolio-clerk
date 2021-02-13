@@ -1,6 +1,7 @@
 package models
 
-import java.time.LocalDate
+import org.joda.time.DateTime
+
 import play.api.libs.json.Json
 import play.api.libs.json.OFormat
 
@@ -8,16 +9,15 @@ case class PortfolioSnapshot(
     id: Long,
     portfolioId: Long,
     openingShareCount: BigDecimal,
-    openingSharePrice: MoneyWrapper,
-    openingValue: MoneyWrapper,
-    netCashFlow: MoneyWrapper,
-    cashFlowSharePrice: MoneyWrapper,
+    openingSharePrice: Money,
+    openingValue: Money,
+    netCashFlow: Money,
     numShareChange: BigDecimal,
     closingShareCount: BigDecimal,
-    closingSharePrice: MoneyWrapper,
-    closingValue: MoneyWrapper,
-    netReturn: BigDecimal,
-    date: LocalDate
+    closingSharePrice: Money,
+    closingValue: Money,
+    netReturn: BigDecimal
+//    snapshotDate: DateTime
 )
 
 object PortfolioSnapshot {

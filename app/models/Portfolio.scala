@@ -6,9 +6,7 @@ import play.api.libs.json.OFormat
 case class Portfolio(
     id: Long,
     userId: Long,
-    shareCount: BigDecimal,
-    sharePrice: MoneyWrapper,
-    totalValue: MoneyWrapper
+    name: String
 )
 
 object Portfolio {

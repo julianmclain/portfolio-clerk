@@ -11,7 +11,7 @@ import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
 
 @Singleton
-final class UserRepository @Inject() (dbConfigProvider: DatabaseConfigProvider)(
+class UserRepository @Inject() (dbConfigProvider: DatabaseConfigProvider)(
     implicit ec: ExecutionContext
 ) {
   private val dbConfig = dbConfigProvider.get[JdbcProfile]

@@ -1,7 +1,7 @@
 package repositories
 
 import models.Deposit
-import models.MoneyWrapper
+import models.Money
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 import slick.lifted.ProvenShape
@@ -12,7 +12,7 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 
 @Singleton
-final class DepositRepository @Inject() (
+class DepositRepository @Inject() (
     dbConfigProvider: DatabaseConfigProvider
 )(implicit
     ec: ExecutionContext
@@ -25,14 +25,14 @@ final class DepositRepository @Inject() (
 
   private class DepositTable(tag: Tag) extends Table[Deposit](tag, "deposits") {
     def id: Rep[Long] = column[Long]("id", O.PrimaryKey, O.AutoInc)
-    def totalAmount: Rep[MoneyWrapper] = column[MoneyWrapper]("total_amount")
     def portfolioId: Rep[Long] = column[Long]("portfolio_id")
+    def totalAmount: Rep[Money] = column[Money]("total_amount")
 
     def * : ProvenShape[Deposit] =
       (
         id,
-        totalAmount,
-        portfolioId
+        portfolioId,
+        totalAmount
       ) <> ((Deposit.apply _).tupled, Deposit.unapply)
   }
 

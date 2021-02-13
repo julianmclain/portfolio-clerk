@@ -3,11 +3,13 @@
 ## Calculating your portfolio's rate of return 
 
 Calculating your portfolio's rate of return is easy unless there are cash inflows / outflows during the period. If 
-that's the case, you have to use a method that accounts for the time value of money.
+that's the case, it's a lot trickier. You need to use a method that accounts for the amount of time that capital was 
+working in the portfolio.
 
-Brokerages show portfolio returns using an Internal Rate of Return calculation (Vanguard for example calls it out
-[here](https://personal.vanguard.com/us/content/MyPortfolio/performance/LMperfSummaryInfoContent.jsp) under __Calculation method__. This isn't a metric 
-that you can compare against the performance of other benchmarks. You need to use a method that removes the effect 
+Brokerages show portfolio returns using an Internal Rate of Return calculation (Vanguard, for example, calls it out
+[here](https://personal.vanguard.com/us/content/MyPortfolio/performance/LMperfSummaryInfoContent.jsp) under 
+__Calculation method__). Unfortunately IRR isn't a metric that you can compare against the performance of other 
+benchmarks. In order to user to make those comparisons, you need to use a method that accounts for the effect 
 of cash flows. 
 
 [Source](https://www.retailinvestor.org/PortfolioReturnCalc.pdf)
@@ -15,6 +17,11 @@ of cash flows.
 Solution - The goal is to replace spreadsheets like [this](https://docs.google.com/spreadsheets/d/13GF2Gzw_8LsAAUDosaONqqCxfBoNfEJY/edit#gid=1622810545)
 
 ## Functionality
+
+// TODO:
+- create withdrawal table
+- create deposit table
+
 v1
 - [ ] ability to create a portfolio
 - [ ] ability to make a deposit
@@ -29,7 +36,6 @@ v1
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
   
-- akka scheduler https://github.com/enragedginger/akka-quartz-scheduler
  
 v2
 - [ ] define a few reference assets (thinking $SPY, BTC, and 1 other)
@@ -41,6 +47,14 @@ v3
   
 v4 
 - visualizations: make it look nice
+
+## Notes
+
+Creating a data layer:
+- Play seems to recommend the repository pattern https://www.playframework.com/documentation/2.8.x/ScalaTestingWithScalaTest
+
+Scheduling tasks:
+- akka scheduler https://github.com/enragedginger/akka-quartz-scheduler
 
 ## TODO
 

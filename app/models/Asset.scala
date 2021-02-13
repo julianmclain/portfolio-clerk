@@ -7,16 +7,16 @@ sealed trait AssetType
 case object Stock extends AssetType
 case object Bond extends AssetType
 case object OptionContract extends AssetType
+case object Cash extends AssetType {
+  val ID = 1
+}
 
 case class Asset(
     id: Long,
     portfolioId: Long,
     assetName: String,
     assetSymbol: String,
-    assetType: AssetType,
-    quantity: BigDecimal,
-    unitPrice: MoneyWrapper,
-    totalValue: MoneyWrapper
+    assetType: AssetType
 )
 
 // TODO - need to figure out json serialization for AssetType. Probably easier to just use beachape enunm,

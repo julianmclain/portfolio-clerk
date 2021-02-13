@@ -5,18 +5,14 @@ import play.api.libs.json.OFormat
 
 case class Transaction(
     id: Long,
-    assetId: Long,
     portfolioId: Long,
-    assetName: String,
-    assetSymbol: String,
-    assetType: AssetType,
-    quantity: Int,
-    unitPrice: MoneyWrapper,
-    totalValue: MoneyWrapper
+    portfolioAssetId: Long,
+    quantity: BigDecimal,
+    unitPrice: Money,
+    totalValue: Money
 )
 
-// TODO - need to fix json serialization for AssetType first
-//object Transaction {
-//  implicit val transactionFormat: OFormat[Transaction] =
-//    Json.format[Transaction]
-//}
+object Transaction {
+  implicit val transactionFormat: OFormat[Transaction] =
+    Json.format[Transaction]
+}

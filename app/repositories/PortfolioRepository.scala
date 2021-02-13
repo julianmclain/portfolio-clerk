@@ -1,6 +1,6 @@
 package repositories
 
-import models.MoneyWrapper
+import models.Money
 import play.api.db.slick.DatabaseConfigProvider
 
 import javax.inject.Inject
@@ -13,7 +13,7 @@ import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
 
 @Singleton
-final class PortfolioRepository @Inject() (
+class PortfolioRepository @Inject() (
     dbConfigProvider: DatabaseConfigProvider
 )(implicit
     ec: ExecutionContext
@@ -28,17 +28,13 @@ final class PortfolioRepository @Inject() (
       extends Table[Portfolio](tag, "portfolios") {
     def id: Rep[Long] = column[Long]("id", O.PrimaryKey, O.AutoInc)
     def userId: Rep[Long] = column[Long]("user_id")
-    def shareCount: Rep[BigDecimal] = column[BigDecimal]("share_count")
-    def sharePrice: Rep[MoneyWrapper] = column[MoneyWrapper]("share_price")
-    def totalValue: Rep[MoneyWrapper] = column[MoneyWrapper]("total_value")
+    def name: Rep[String] = column[String]("name")
 
     def * : ProvenShape[Portfolio] =
       (
         id,
         userId,
-        shareCount,
-        sharePrice,
-        totalValue
+        name
       ) <> ((Portfolio.apply _).tupled, Portfolio.unapply)
   }
 

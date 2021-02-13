@@ -1,6 +1,6 @@
 package repositories
 
-import models.MoneyWrapper
+import models.Money
 import play.api.db.slick.DatabaseConfigProvider
 
 import javax.inject.Inject
@@ -14,7 +14,7 @@ import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
 
 @Singleton
-final class PortfolioSnapshotRepository @Inject() (
+class PortfolioSnapshotRepository @Inject() (
     dbConfigProvider: DatabaseConfigProvider
 )(implicit
     ec: ExecutionContext
@@ -31,20 +31,18 @@ final class PortfolioSnapshotRepository @Inject() (
     def portfolioId: Rep[Long] = column[Long]("portfolio_id")
     def openingShareCount: Rep[BigDecimal] =
       column[BigDecimal]("opening_share_count")
-    def openingSharePrice: Rep[MoneyWrapper] =
-      column[MoneyWrapper]("opening_share_price")
-    def openingValue: Rep[MoneyWrapper] = column[MoneyWrapper]("opening_value")
-    def netCashFlow: Rep[MoneyWrapper] = column[MoneyWrapper]("net_cash_flow")
-    def cashFlowSharePrice: Rep[MoneyWrapper] =
-      column[MoneyWrapper]("cash_flow_share_price")
+    def openingSharePrice: Rep[Money] =
+      column[Money]("opening_share_price")
+    def openingValue: Rep[Money] = column[Money]("opening_value")
+    def netCashFlow: Rep[Money] = column[Money]("net_cash_flow")
     def numShareChange: Rep[BigDecimal] = column[BigDecimal]("num_share_change")
     def closingShareCount: Rep[BigDecimal] =
       column[BigDecimal]("closing_share_count")
-    def closingSharePrice: Rep[MoneyWrapper] =
-      column[MoneyWrapper]("closing_share_price")
-    def closingValue: Rep[MoneyWrapper] = column[MoneyWrapper]("closing_value")
+    def closingSharePrice: Rep[Money] =
+      column[Money]("closing_share_price")
+    def closingValue: Rep[Money] = column[Money]("closing_value")
     def netReturn: Rep[BigDecimal] = column[BigDecimal]("net_return")
-    def date: Rep[LocalDate] = column[LocalDate]("date")
+//    def date: Rep[LocalDate] = column[LocalDate]("date")
 
     def * : ProvenShape[PortfolioSnapshot] =
       (
@@ -54,13 +52,12 @@ final class PortfolioSnapshotRepository @Inject() (
         openingSharePrice,
         openingValue,
         netCashFlow,
-        cashFlowSharePrice,
         numShareChange,
         closingShareCount,
         closingSharePrice,
         closingValue,
-        netReturn,
-        date
+        netReturn
+//        date
       ) <> (
         (PortfolioSnapshot.apply _).tupled,
         PortfolioSnapshot.unapply

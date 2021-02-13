@@ -2,7 +2,7 @@ package repositories
 
 import models.Asset
 import models.AssetType
-import models.MoneyWrapper
+import models.Money
 import play.api.db.slick.DatabaseConfigProvider
 
 import javax.inject.Inject
@@ -14,7 +14,7 @@ import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
 
 @Singleton
-final class AssetRepository @Inject() (
+class AssetRepository @Inject() (
     dbConfigProvider: DatabaseConfigProvider
 )(implicit
     ec: ExecutionContext
@@ -23,7 +23,6 @@ final class AssetRepository @Inject() (
 
   import dbConfig._
   import profile.api._
-  import CustomColumnTypes.moneyMapper
   import CustomColumnTypes.assetTypeMapper
 
   private class AssetTable(tag: Tag) extends Table[Asset](tag, "assets") {
@@ -32,9 +31,6 @@ final class AssetRepository @Inject() (
     def assetName: Rep[String] = column[String]("asset_name")
     def assetSymbol: Rep[String] = column[String]("asset_symbol")
     def assetType: Rep[AssetType] = column[AssetType]("asset_type")
-    def quantity: Rep[BigDecimal] = column[BigDecimal]("quantity")
-    def unitPrice: Rep[MoneyWrapper] = column[MoneyWrapper]("unit_price")
-    def totalValue: Rep[MoneyWrapper] = column[MoneyWrapper]("total_value")
 
     def * : ProvenShape[Asset] =
       (
@@ -42,10 +38,7 @@ final class AssetRepository @Inject() (
         portfolioId,
         assetName,
         assetSymbol,
-        assetType,
-        quantity,
-        unitPrice,
-        totalValue
+        assetType
       ) <> ((Asset.apply _).tupled, Asset.unapply)
   }
 

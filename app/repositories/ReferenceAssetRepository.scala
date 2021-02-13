@@ -11,7 +11,7 @@ import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
 
 @Singleton
-final class ReferenceAssetRepository @Inject() (
+class ReferenceAssetRepository @Inject() (
     dbConfigProvider: DatabaseConfigProvider
 )(implicit
     ec: ExecutionContext
