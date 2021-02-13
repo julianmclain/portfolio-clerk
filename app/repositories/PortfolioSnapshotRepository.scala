@@ -1,29 +1,26 @@
 package repositories
 
+import db.ApplicationPostgresProfile
 import models.Money
 import play.api.db.slick.DatabaseConfigProvider
 
 import javax.inject.Inject
 import javax.inject.Singleton
-import slick.jdbc.JdbcProfile
 import slick.lifted.ProvenShape
 import models.PortfolioSnapshot
+import play.api.db.slick.HasDatabaseConfigProvider
 
-import java.time.LocalDate
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
 
 @Singleton
 class PortfolioSnapshotRepository @Inject() (
-    dbConfigProvider: DatabaseConfigProvider
+    protected val dbConfigProvider: DatabaseConfigProvider
 )(implicit
     ec: ExecutionContext
-) {
-  private val dbConfig = dbConfigProvider.get[JdbcProfile]
+) extends HasDatabaseConfigProvider[ApplicationPostgresProfile] {
 
-  import dbConfig._
-  import profile.api._
-  import CustomColumnTypes.moneyMapper
+  import ApplicationPostgresProfile.api._
 
   private class PortfolioSnapshotTable(tag: Tag)
       extends Table[PortfolioSnapshot](tag, "portfolio_snapshots") {

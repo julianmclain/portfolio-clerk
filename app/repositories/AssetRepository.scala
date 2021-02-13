@@ -1,13 +1,13 @@
 package repositories
 
+import db.ApplicationPostgresProfile
 import models.Asset
 import models.AssetType
-import models.Money
 import play.api.db.slick.DatabaseConfigProvider
+import play.api.db.slick.HasDatabaseConfigProvider
 
 import javax.inject.Inject
 import javax.inject.Singleton
-import slick.jdbc.JdbcProfile
 import slick.lifted.ProvenShape
 
 import scala.concurrent.Future
@@ -15,15 +15,12 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class AssetRepository @Inject() (
-    dbConfigProvider: DatabaseConfigProvider
+    protected val dbConfigProvider: DatabaseConfigProvider
 )(implicit
     ec: ExecutionContext
-) {
-  private val dbConfig = dbConfigProvider.get[JdbcProfile]
+) extends HasDatabaseConfigProvider[ApplicationPostgresProfile] {
 
-  import dbConfig._
-  import profile.api._
-  import CustomColumnTypes.assetTypeMapper
+  import ApplicationPostgresProfile.api._
 
   private class AssetTable(tag: Tag) extends Table[Asset](tag, "assets") {
     def id: Rep[Long] = column[Long]("id", O.PrimaryKey, O.AutoInc)

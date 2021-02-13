@@ -19,6 +19,7 @@ import repositories.PortfolioRepository
 import repositories.PortfolioSnapshotRepository
 import repositories.UserRepository
 
+import java.time.OffsetDateTime
 import scala.concurrent.ExecutionContext
 
 /**
@@ -51,7 +52,16 @@ class HomeController @Inject() (
         p <- portfolioRepo.create(
           Portfolio(0, u.id, "Test portfolio")
         )
-        d <- depositRepo.create(Deposit(0, p.id, Money("USD 23.87")))
+//        d <- depositRepo.create(
+//          Deposit(
+//            0,
+//            p.id,
+//            Money("USD 23.87")
+//            OffsetDateTime.parse("2007-12-03T10:15:30+01:00"),
+//            OffsetDateTime.parse("2007-12-03T10:15:30+01:00"),
+//            OffsetDateTime.parse("2007-12-03T10:15:30+01:00")
+//          )
+//        )
         a <- assetRepo.create(
           Asset(
             id = 0,
@@ -63,12 +73,25 @@ class HomeController @Inject() (
         )
         pa <- portfolioAssetRepo.create(
           PortfolioAsset(
+            0,
             portfolioId = p.id,
             assetId = a.id,
             quantity = 1
           )
         )
       } yield {
+        depositRepo
+          .create(
+            Deposit(
+              0,
+              p.id,
+              Money("USD 23.87"),
+              OffsetDateTime.parse("2007-12-03T10:15:30+01:00")
+//              OffsetDateTime.parse("2007-12-03T10:15:30+01:00"),
+//              OffsetDateTime.parse("2007-12-03T10:15:30+01:00")
+            )
+          )
+          .map(println)
         println(pa)
       }
 

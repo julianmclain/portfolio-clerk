@@ -76,7 +76,7 @@
 //          closingValue = netAssetValue,
 //          netReturn =
 //            closingSharePrice.minus(openingSharePrice).getAmount / 100,
-//          date = currentDate
+//          snapshotDate = currentDate
 //        )
 //      )
 //    }

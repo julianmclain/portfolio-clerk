@@ -1,23 +1,25 @@
 package repositories
 
+import db.ApplicationPostgresProfile
 import play.api.db.slick.DatabaseConfigProvider
+
 import javax.inject.Inject
 import javax.inject.Singleton
-import slick.jdbc.JdbcProfile
 import slick.lifted.ProvenShape
 import models.User
+import play.api.db.slick.HasDatabaseConfigProvider
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class UserRepository @Inject() (dbConfigProvider: DatabaseConfigProvider)(
-    implicit ec: ExecutionContext
-) {
-  private val dbConfig = dbConfigProvider.get[JdbcProfile]
+class UserRepository @Inject() (
+    protected val dbConfigProvider: DatabaseConfigProvider
+)(implicit
+    ec: ExecutionContext
+) extends HasDatabaseConfigProvider[ApplicationPostgresProfile] {
 
-  import dbConfig._
-  import profile.api._
+  import ApplicationPostgresProfile.api._
 
   private class UserTable(tag: Tag) extends Table[User](tag, "users") {
     def id: Rep[Long] = column[Long]("id", O.PrimaryKey, O.AutoInc)

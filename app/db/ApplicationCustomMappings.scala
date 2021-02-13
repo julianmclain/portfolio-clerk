@@ -1,4 +1,4 @@
-package repositories
+package db
 
 import models.AssetType
 import models.Bond
@@ -7,9 +7,9 @@ import models.OptionContract
 import models.Stock
 import slick.ast.BaseTypedType
 import slick.jdbc.JdbcType
-import slick.jdbc.PostgresProfile.api._
+import com.github.tminglei.slickpg.ExPostgresProfile.api._
 
-object CustomColumnTypes {
+trait ApplicationCustomMappings {
   implicit val moneyMapper: JdbcType[Money] with BaseTypedType[Money] =
     MappedColumnType.base[Money, String](
       money => money.toString,
@@ -20,11 +20,10 @@ object CustomColumnTypes {
       : JdbcType[AssetType] with BaseTypedType[AssetType] =
     MappedColumnType.base[AssetType, String](
       at => at.getClass.getSimpleName,
-      str =>
-        str match {
-          case "Stock"  => Stock
-          case "Bond"   => Bond
-          case "Option" => OptionContract
-        }
+      {
+        case "Stock"  => Stock
+        case "Bond"   => Bond
+        case "Option" => OptionContract
+      }
     )
 }

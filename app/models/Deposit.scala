@@ -3,10 +3,15 @@ package models
 import play.api.libs.json.Json
 import play.api.libs.json.OFormat
 
+import java.time.OffsetDateTime
+
 case class Deposit(
     id: Long,
     portfolioId: Long,
-    totalAmount: Money
+    totalAmount: Money,
+    depositDateTime: OffsetDateTime
+//    createdAt: OffsetDateTime,
+//    updatedAt: OffsetDateTime
 )
 
 object Deposit {

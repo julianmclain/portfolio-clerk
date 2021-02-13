@@ -25,8 +25,9 @@ CREATE TABLE IF NOT EXISTS deposits (
     id BIGSERIAL PRIMARY KEY,
     portfolio_id BIGINT NOT NULL REFERENCES portfolios(id),
     total_amount VARCHAR(510) NOT NULL,
-    created_at timestamp with time zone not null default now(),
-    updated_at timestamp with time zone not null default now()
+    deposit_datetime timestamp with time zone
+--     created_at timestamp with time zone not null default now(),
+--     updated_at timestamp with time zone not null default now()
 );
 
 CREATE TABLE IF NOT EXISTS portfolio_snapshots (
@@ -58,12 +59,13 @@ CREATE TABLE IF NOT EXISTS assets (
 );
 
 CREATE TABLE IF NOT EXISTS portfolio_assets (
-    PRIMARY KEY(portfolio_id, asset_id),
+    id BIGSERIAL not null,
     portfolio_id BIGINT NOT NULL REFERENCES portfolios(id),
     asset_id BIGINT NOT NULL REFERENCES assets(id),
     quantity NUMERIC,
     created_at timestamp with time zone not null default now(),
-    updated_at timestamp with time zone not null default now()
+    updated_at timestamp with time zone not null default now(),
+    PRIMARY KEY(portfolio_id, asset_id)
 );
 
 CREATE TABLE IF NOT EXISTS transactions (

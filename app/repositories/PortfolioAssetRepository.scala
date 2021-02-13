@@ -1,36 +1,34 @@
 package repositories
 
+import db.ApplicationPostgresProfile
 import models.PortfolioAsset
 import play.api.db.slick.DatabaseConfigProvider
+import play.api.db.slick.HasDatabaseConfigProvider
+import slick.lifted.ProvenShape
 
 import javax.inject.Inject
 import javax.inject.Singleton
-import slick.jdbc.JdbcProfile
-import slick.lifted.ProvenShape
-
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
 
 @Singleton
-final class PortfolioAssetRepository @Inject() (
-    dbConfigProvider: DatabaseConfigProvider
+class PortfolioAssetRepository @Inject() (
+    protected val dbConfigProvider: DatabaseConfigProvider
 )(implicit
     ec: ExecutionContext
-) {
-  private val dbConfig = dbConfigProvider.get[JdbcProfile]
-
-  import dbConfig._
-  import profile.api._
-  import CustomColumnTypes.moneyMapper
+) extends HasDatabaseConfigProvider[ApplicationPostgresProfile] {
+  import ApplicationPostgresProfile.api._
 
   private class PortfolioAssetTable(tag: Tag)
       extends Table[PortfolioAsset](tag, "portfolio_assets") {
-    def id = primaryKey("id", (portfolioId, assetId))
+    def id: Rep[Long] = column[Long]("id")
     def portfolioId: Rep[Long] = column[Long]("portfolio_id")
     def assetId: Rep[Long] = column[Long]("asset_id")
     def quantity: Rep[BigDecimal] = column[BigDecimal]("quantity")
+    primaryKey("id", (portfolioId, assetId))
     def * : ProvenShape[PortfolioAsset] =
       (
+        id,
         portfolioId,
         assetId,
         quantity
@@ -44,8 +42,8 @@ final class PortfolioAssetRepository @Inject() (
 
   def create(portfolioAsset: PortfolioAsset): Future[PortfolioAsset] = {
     val insertQuery =
-      portfolioAssets returning portfolioAssets into ((pa, id) =>
-        PortfolioAsset(pa.portfolioId, pa.assetId, pa.quantity)
+      portfolioAssets returning portfolioAssets.map(_.id) into ((pa, id) =>
+        portfolioAsset.copy(id = id)
       )
     val action = insertQuery += portfolioAsset
     db.run(action)

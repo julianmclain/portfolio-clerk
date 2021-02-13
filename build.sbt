@@ -16,7 +16,6 @@ libraryDependencies += "com.typesafe.play" %% "play-slick" % "5.0.0"
 libraryDependencies += "com.typesafe.play" %% "play-slick-evolutions" % "5.0.0"
 libraryDependencies += "org.postgresql" % "postgresql" % "42.2.18"
 libraryDependencies += "com.github.tminglei" %% "slick-pg" % "0.19.4"
-libraryDependencies += "com.github.tminglei" %% "slick-pg_joda-time" % "0.19.4"
 
 libraryDependencies += "org.joda" % "joda-money" % "1.0.1"
 libraryDependencies += "org.typelevel" %% "cats-core" % "2.1.1"

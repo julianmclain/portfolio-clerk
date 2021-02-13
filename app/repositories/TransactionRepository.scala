@@ -1,28 +1,26 @@
 package repositories
 
+import db.ApplicationPostgresProfile
 import play.api.db.slick.DatabaseConfigProvider
 
 import javax.inject.Inject
 import javax.inject.Singleton
-import slick.jdbc.JdbcProfile
 import slick.lifted.ProvenShape
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
 import models.Transaction
 import models.Money
+import play.api.db.slick.HasDatabaseConfigProvider
 
 @Singleton
 class TransactionRepository @Inject() (
-    dbConfigProvider: DatabaseConfigProvider
+    protected val dbConfigProvider: DatabaseConfigProvider
 )(implicit
     ec: ExecutionContext
-) {
-  private val dbConfig = dbConfigProvider.get[JdbcProfile]
+) extends HasDatabaseConfigProvider[ApplicationPostgresProfile] {
 
-  import dbConfig._
-  import profile.api._
-  import CustomColumnTypes.moneyMapper
+  import ApplicationPostgresProfile.api._
 
   private class TransactionTable(tag: Tag)
       extends Table[Transaction](tag, "transactions") {
