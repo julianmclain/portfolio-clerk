@@ -52,7 +52,13 @@ class AssetRepository @Inject() (
 
   def create(asset: Asset): Future[Asset] = {
     val insertQuery =
-      assets returning assets.map(_.id) into ((_, id) => asset.copy(id = id))
+      assets returning assets.map(_.id) into ((record, id) =>
+        asset.copy(
+          id = id,
+          updatedAt = record.updatedAt,
+          createdAt = record.createdAt
+        )
+      )
     val action = insertQuery += asset
     db.run(action)
   }

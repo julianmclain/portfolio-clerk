@@ -45,9 +45,14 @@ class PortfolioRepository @Inject() (
     db.run(portfolios.filter(_.id === id).result.headOption)
 
   def create(portfolio: Portfolio): Future[Portfolio] = {
-    val insertQuery = portfolios returning portfolios.map(_.id) into ((_, id) =>
-      portfolio.copy(id = id)
-    )
+    val insertQuery =
+      portfolios returning portfolios.map(_.id) into ((record, id) =>
+        portfolio.copy(
+          id = id,
+          updatedAt = record.updatedAt,
+          createdAt = record.createdAt
+        )
+      )
     val action = insertQuery += portfolio
     db.run(action)
   }

@@ -3,7 +3,6 @@ package repositories
 import db.ApplicationPostgresProfile
 import db.AutoIncId
 import db.Timestamps
-import models.t
 import play.api.db.slick.DatabaseConfigProvider
 
 import javax.inject.Inject
@@ -78,8 +77,13 @@ class PortfolioSnapshotRepository @Inject() (
       portfolioSnapshot: PortfolioSnapshot
   ): Future[PortfolioSnapshot] = {
     val insertQuery =
-      portfolioSnapshots returning portfolioSnapshots.map(_.id) into ((_, id) =>
-        portfolioSnapshot.copy(id = id)
+      portfolioSnapshots returning portfolioSnapshots.map(_.id) into (
+        (record, id) =>
+          portfolioSnapshot.copy(
+            id = id,
+            updatedAt = record.updatedAt,
+            createdAt = record.createdAt
+          )
       )
     val action = insertQuery += portfolioSnapshot
     db.run(action)

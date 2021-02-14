@@ -29,7 +29,6 @@ class ReferenceAssetRepository @Inject() (
       with Timestamps {
     def name: Rep[String] = column[String]("name")
     def symbol: Rep[String] = column[String]("symbol")
-
     def * : ProvenShape[ReferenceAsset] =
       (id, name, symbol, createdAt, updatedAt) <> (
         (ReferenceAsset.apply _).tupled,

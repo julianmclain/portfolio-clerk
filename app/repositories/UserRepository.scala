@@ -49,7 +49,13 @@ class UserRepository @Inject() (
 
   def create(user: User): Future[User] = {
     val insertQuery =
-      users returning users.map(_.id) into ((_, id) => user.copy(id = id))
+      users returning users.map(_.id) into ((record, id) =>
+        user.copy(
+          id = id,
+          updatedAt = record.updatedAt,
+          createdAt = record.createdAt
+        )
+      )
     val action = insertQuery += user
     db.run(action)
   }

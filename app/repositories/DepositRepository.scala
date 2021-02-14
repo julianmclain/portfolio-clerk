@@ -4,7 +4,6 @@ import db.ApplicationPostgresProfile
 import db.AutoIncId
 import db.Timestamps
 import models.Deposit
-import models.t
 import org.joda.money.Money
 import play.api.db.slick.DatabaseConfigProvider
 import slick.lifted.ProvenShape
@@ -53,7 +52,6 @@ class DepositRepository @Inject() (
     db.run(deposits.filter(_.id === id).result.headOption)
 
   def create(deposit: Deposit): Future[Deposit] = {
-    println("at least trying")
     val insertQuery =
       deposits returning deposits.map(_.id) into ((record, id) =>
         deposit.copy(
