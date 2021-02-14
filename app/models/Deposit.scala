@@ -9,9 +9,9 @@ case class Deposit(
     id: Long,
     portfolioId: Long,
     totalAmount: Money,
-    depositDateTime: OffsetDateTime
-//    createdAt: OffsetDateTime,
-//    updatedAt: OffsetDateTime
+    depositDateTime: OffsetDateTime,
+    createdAt: Option[OffsetDateTime],
+    updatedAt: Option[OffsetDateTime]
 )
 
 object Deposit {

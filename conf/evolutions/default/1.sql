@@ -1,4 +1,3 @@
--- noinspection SqlNoDataSourceInspectionForFile
 -- Initial tables
 
 # --- !Ups
@@ -6,8 +5,9 @@
 CREATE TABLE IF NOT EXISTS users (
     id BIGSERIAL PRIMARY KEY,
     email VARCHAR(510) NOT NULL,
-    created_at timestamp with time zone not null default now(),
-    updated_at timestamp with time zone not null default now()
+    signup_datetime TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
 );
 
 CREATE TABLE IF NOT EXISTS portfolios (
@@ -17,17 +17,17 @@ CREATE TABLE IF NOT EXISTS portfolios (
     share_count NUMERIC,
     share_price VARCHAR(510),
     total_value VARCHAR(510),
-    created_at timestamp with time zone not null default now(),
-    updated_at timestamp with time zone not null default now()
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
 );
 
 CREATE TABLE IF NOT EXISTS deposits (
     id BIGSERIAL PRIMARY KEY,
     portfolio_id BIGINT NOT NULL REFERENCES portfolios(id),
     total_amount VARCHAR(510) NOT NULL,
-    deposit_datetime timestamp with time zone
---     created_at timestamp with time zone not null default now(),
---     updated_at timestamp with time zone not null default now()
+    deposit_datetime TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
 );
 
 CREATE TABLE IF NOT EXISTS portfolio_snapshots (
@@ -43,9 +43,9 @@ CREATE TABLE IF NOT EXISTS portfolio_snapshots (
     closing_share_price VARCHAR(510),
     closing_value VARCHAR(510),
     net_return NUMERIC,
-    date DATE,
-    created_at timestamp with time zone not null default now(),
-    updated_at timestamp with time zone not null default now()
+    snapshot_datetime TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
 );
 
 CREATE TABLE IF NOT EXISTS assets (
@@ -54,17 +54,17 @@ CREATE TABLE IF NOT EXISTS assets (
     asset_name VARCHAR(510),
     asset_symbol VARCHAR(510),
     asset_type VARCHAR(510),
-    created_at timestamp with time zone not null default now(),
-    updated_at timestamp with time zone not null default now()
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
 );
 
 CREATE TABLE IF NOT EXISTS portfolio_assets (
-    id BIGSERIAL not null,
+    id BIGSERIAL NOT NULL,
     portfolio_id BIGINT NOT NULL REFERENCES portfolios(id),
     asset_id BIGINT NOT NULL REFERENCES assets(id),
     quantity NUMERIC,
-    created_at timestamp with time zone not null default now(),
-    updated_at timestamp with time zone not null default now(),
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
     PRIMARY KEY(portfolio_id, asset_id)
 );
 
@@ -75,8 +75,9 @@ CREATE TABLE IF NOT EXISTS transactions (
     quantity NUMERIC,
     unit_price VARCHAR(510),
     total_value VARCHAR(510),
-    created_at timestamp with time zone not null default now(),
-    updated_at timestamp with time zone not null default now()
+    transaction_datetime TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
 );
 
 # --- !Downs

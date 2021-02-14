@@ -1,6 +1,8 @@
 package repositories
 
 import db.ApplicationPostgresProfile
+import db.AutoIncId
+import db.Timestamps
 import models.Deposit
 import models.Money
 import play.api.db.slick.DatabaseConfigProvider
@@ -23,24 +25,24 @@ class DepositRepository @Inject() (
 
   import ApplicationPostgresProfile.api._
 
-  private class DepositTable(tag: Tag) extends Table[Deposit](tag, "deposits") {
-    def id: Rep[Long] = column[Long]("id", O.PrimaryKey, O.AutoInc)
+  private class DepositTable(tag: Tag)
+      extends Table[Deposit](tag, "deposits")
+      with AutoIncId
+      with Timestamps {
     def portfolioId: Rep[Long] = column[Long]("portfolio_id")
     def totalAmount: Rep[Money] = column[Money]("total_amount")
     def depositDateTime: Rep[OffsetDateTime] = {
       column[OffsetDateTime]("deposit_datetime")
     }
-//    def createdAt: Rep[OffsetDateTime] = column[OffsetDateTime]("created_at")
-//    def updatedAt: Rep[OffsetDateTime] = column[OffsetDateTime]("updated_at")
 
     def * : ProvenShape[Deposit] =
       (
         id,
         portfolioId,
         totalAmount,
-        depositDateTime
-//        createdAt,
-//        updatedAt
+        depositDateTime,
+        createdAt,
+        updatedAt
       ) <> ((Deposit.apply _).tupled, Deposit.unapply)
   }
 
@@ -51,9 +53,14 @@ class DepositRepository @Inject() (
 
   def create(deposit: Deposit): Future[Deposit] = {
     println("at least trying")
-    val insertQuery = deposits returning deposits.map(_.id) into ((_, id) =>
-      deposit.copy(id = id)
-    )
+    val insertQuery =
+      deposits returning deposits.map(_.id) into ((record, id) =>
+        deposit.copy(
+          id = id,
+          updatedAt = record.updatedAt,
+          createdAt = record.createdAt
+        )
+      )
     val action = insertQuery += deposit
     db.run(action)
   }

@@ -1,9 +1,9 @@
 package models
 
-import org.joda.time.DateTime
-
 import play.api.libs.json.Json
 import play.api.libs.json.OFormat
+
+import java.time.OffsetDateTime
 
 case class PortfolioSnapshot(
     id: Long,
@@ -16,8 +16,10 @@ case class PortfolioSnapshot(
     closingShareCount: BigDecimal,
     closingSharePrice: Money,
     closingValue: Money,
-    netReturn: BigDecimal
-//    snapshotDate: DateTime
+    netReturn: BigDecimal,
+    snapshotDate: OffsetDateTime,
+    createdAt: Option[OffsetDateTime],
+    updatedAt: Option[OffsetDateTime]
 )
 
 object PortfolioSnapshot {

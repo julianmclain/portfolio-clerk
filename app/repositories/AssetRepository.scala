@@ -1,6 +1,8 @@
 package repositories
 
 import db.ApplicationPostgresProfile
+import db.AutoIncId
+import db.Timestamps
 import models.Asset
 import models.AssetType
 import play.api.db.slick.DatabaseConfigProvider
@@ -22,8 +24,10 @@ class AssetRepository @Inject() (
 
   import ApplicationPostgresProfile.api._
 
-  private class AssetTable(tag: Tag) extends Table[Asset](tag, "assets") {
-    def id: Rep[Long] = column[Long]("id", O.PrimaryKey, O.AutoInc)
+  private class AssetTable(tag: Tag)
+      extends Table[Asset](tag, "assets")
+      with AutoIncId
+      with Timestamps {
     def portfolioId: Rep[Long] = column[Long]("portfolio_id")
     def assetName: Rep[String] = column[String]("asset_name")
     def assetSymbol: Rep[String] = column[String]("asset_symbol")
@@ -35,7 +39,9 @@ class AssetRepository @Inject() (
         portfolioId,
         assetName,
         assetSymbol,
-        assetType
+        assetType,
+        createdAt,
+        updatedAt
       ) <> ((Asset.apply _).tupled, Asset.unapply)
   }
 

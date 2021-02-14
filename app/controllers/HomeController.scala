@@ -48,9 +48,17 @@ class HomeController @Inject() (
   def index() =
     Action { implicit request: Request[AnyContent] =>
       val test = for {
-        u <- userRepo.create(User(0, "hi@aol.com"))
+        u <- userRepo.create(
+          User(
+            0,
+            "hi@aol.com",
+            OffsetDateTime.parse("2007-12-03T10:15:30+01:00"),
+            None,
+            None
+          )
+        )
         p <- portfolioRepo.create(
-          Portfolio(0, u.id, "Test portfolio")
+          Portfolio(0, u.id, "Test portfolio", None, None)
         )
 //        d <- depositRepo.create(
 //          Deposit(
@@ -68,7 +76,9 @@ class HomeController @Inject() (
             portfolioId = p.id,
             assetName = "Apple stock",
             assetSymbol = "AAPL",
-            assetType = Stock
+            assetType = Stock,
+            None,
+            None
           )
         )
         pa <- portfolioAssetRepo.create(
@@ -76,7 +86,9 @@ class HomeController @Inject() (
             0,
             portfolioId = p.id,
             assetId = a.id,
-            quantity = 1
+            quantity = 1,
+            None,
+            None
           )
         )
       } yield {
@@ -86,9 +98,9 @@ class HomeController @Inject() (
               0,
               p.id,
               Money("USD 23.87"),
-              OffsetDateTime.parse("2007-12-03T10:15:30+01:00")
-//              OffsetDateTime.parse("2007-12-03T10:15:30+01:00"),
-//              OffsetDateTime.parse("2007-12-03T10:15:30+01:00")
+              OffsetDateTime.parse("2007-12-03T10:15:30+01:00"),
+              None,
+              None
             )
           )
           .map(println)

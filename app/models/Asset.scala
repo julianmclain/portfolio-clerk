@@ -3,6 +3,8 @@ package models
 import play.api.libs.json.Json
 import play.api.libs.json.OFormat
 
+import java.time.OffsetDateTime
+
 sealed trait AssetType
 case object Stock extends AssetType
 case object Bond extends AssetType
@@ -16,7 +18,9 @@ case class Asset(
     portfolioId: Long,
     assetName: String,
     assetSymbol: String,
-    assetType: AssetType
+    assetType: AssetType,
+    createdAt: Option[OffsetDateTime],
+    updatedAt: Option[OffsetDateTime]
 )
 
 // TODO - need to figure out json serialization for AssetType. Probably easier to just use beachape enunm,

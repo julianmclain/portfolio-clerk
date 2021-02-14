@@ -1,6 +1,7 @@
 package repositories
 
 import db.ApplicationPostgresProfile
+import db.Timestamps
 import models.PortfolioAsset
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.db.slick.HasDatabaseConfigProvider
@@ -20,7 +21,8 @@ class PortfolioAssetRepository @Inject() (
   import ApplicationPostgresProfile.api._
 
   private class PortfolioAssetTable(tag: Tag)
-      extends Table[PortfolioAsset](tag, "portfolio_assets") {
+      extends Table[PortfolioAsset](tag, "portfolio_assets")
+      with Timestamps {
     def id: Rep[Long] = column[Long]("id")
     def portfolioId: Rep[Long] = column[Long]("portfolio_id")
     def assetId: Rep[Long] = column[Long]("asset_id")
@@ -31,7 +33,9 @@ class PortfolioAssetRepository @Inject() (
         id,
         portfolioId,
         assetId,
-        quantity
+        quantity,
+        createdAt,
+        updatedAt
       ) <> ((PortfolioAsset.apply _).tupled, PortfolioAsset.unapply)
   }
 

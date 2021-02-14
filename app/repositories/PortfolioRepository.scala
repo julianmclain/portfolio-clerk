@@ -1,6 +1,8 @@
 package repositories
 
 import db.ApplicationPostgresProfile
+import db.AutoIncId
+import db.Timestamps
 import play.api.db.slick.DatabaseConfigProvider
 
 import javax.inject.Inject
@@ -21,8 +23,9 @@ class PortfolioRepository @Inject() (
   import ApplicationPostgresProfile.api._
 
   private class PortfolioTable(tag: Tag)
-      extends Table[Portfolio](tag, "portfolios") {
-    def id: Rep[Long] = column[Long]("id", O.PrimaryKey, O.AutoInc)
+      extends Table[Portfolio](tag, "portfolios")
+      with AutoIncId
+      with Timestamps {
     def userId: Rep[Long] = column[Long]("user_id")
     def name: Rep[String] = column[String]("name")
 
@@ -30,7 +33,9 @@ class PortfolioRepository @Inject() (
       (
         id,
         userId,
-        name
+        name,
+        createdAt,
+        updatedAt
       ) <> ((Portfolio.apply _).tupled, Portfolio.unapply)
   }
 

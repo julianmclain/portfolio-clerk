@@ -1,6 +1,8 @@
 package repositories
 
 import db.ApplicationPostgresProfile
+import db.AutoIncId
+import db.Timestamps
 import models.Money
 import play.api.db.slick.DatabaseConfigProvider
 
@@ -10,6 +12,7 @@ import slick.lifted.ProvenShape
 import models.PortfolioSnapshot
 import play.api.db.slick.HasDatabaseConfigProvider
 
+import java.time.OffsetDateTime
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
 
@@ -23,8 +26,9 @@ class PortfolioSnapshotRepository @Inject() (
   import ApplicationPostgresProfile.api._
 
   private class PortfolioSnapshotTable(tag: Tag)
-      extends Table[PortfolioSnapshot](tag, "portfolio_snapshots") {
-    def id: Rep[Long] = column[Long]("id", O.PrimaryKey, O.AutoInc)
+      extends Table[PortfolioSnapshot](tag, "portfolio_snapshots")
+      with AutoIncId
+      with Timestamps {
     def portfolioId: Rep[Long] = column[Long]("portfolio_id")
     def openingShareCount: Rep[BigDecimal] =
       column[BigDecimal]("opening_share_count")
@@ -39,7 +43,8 @@ class PortfolioSnapshotRepository @Inject() (
       column[Money]("closing_share_price")
     def closingValue: Rep[Money] = column[Money]("closing_value")
     def netReturn: Rep[BigDecimal] = column[BigDecimal]("net_return")
-//    def date: Rep[LocalDate] = column[LocalDate]("date")
+    def snapshotDatetime: Rep[OffsetDateTime] =
+      column[OffsetDateTime]("snapshot_datetime")
 
     def * : ProvenShape[PortfolioSnapshot] =
       (
@@ -53,8 +58,10 @@ class PortfolioSnapshotRepository @Inject() (
         closingShareCount,
         closingSharePrice,
         closingValue,
-        netReturn
-//        date
+        netReturn,
+        snapshotDatetime,
+        createdAt,
+        updatedAt
       ) <> (
         (PortfolioSnapshot.apply _).tupled,
         PortfolioSnapshot.unapply
