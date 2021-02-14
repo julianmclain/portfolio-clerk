@@ -1,5 +1,6 @@
 package models
 
+import org.joda.money.Money
 import play.api.libs.json.Json
 import play.api.libs.json.OFormat
 

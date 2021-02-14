@@ -4,7 +4,8 @@ import db.ApplicationPostgresProfile
 import db.AutoIncId
 import db.Timestamps
 import models.Deposit
-import models.Money
+import models.t
+import org.joda.money.Money
 import play.api.db.slick.DatabaseConfigProvider
 import slick.lifted.ProvenShape
 

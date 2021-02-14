@@ -3,13 +3,14 @@ package repositories
 import db.ApplicationPostgresProfile
 import db.AutoIncId
 import db.Timestamps
-import models.Money
+import models.t
 import play.api.db.slick.DatabaseConfigProvider
 
 import javax.inject.Inject
 import javax.inject.Singleton
 import slick.lifted.ProvenShape
 import models.PortfolioSnapshot
+import org.joda.money.Money
 import play.api.db.slick.HasDatabaseConfigProvider
 
 import java.time.OffsetDateTime

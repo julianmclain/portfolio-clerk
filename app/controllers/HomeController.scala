@@ -2,12 +2,13 @@ package controllers
 
 import models.Asset
 import models.Deposit
-import models.Money
+import models.t
 import models.Portfolio
 import models.PortfolioAsset
 import models.PortfolioSnapshot
 import models.Stock
 import models.User
+import org.joda.money.Money
 
 import javax.inject._
 import play.api.mvc.BaseController
@@ -60,16 +61,16 @@ class HomeController @Inject() (
         p <- portfolioRepo.create(
           Portfolio(0, u.id, "Test portfolio", None, None)
         )
-//        d <- depositRepo.create(
-//          Deposit(
-//            0,
-//            p.id,
-//            Money("USD 23.87")
-//            OffsetDateTime.parse("2007-12-03T10:15:30+01:00"),
-//            OffsetDateTime.parse("2007-12-03T10:15:30+01:00"),
-//            OffsetDateTime.parse("2007-12-03T10:15:30+01:00")
-//          )
-//        )
+        d <- depositRepo.create(
+          Deposit(
+            0,
+            p.id,
+            Money.parse("USD 23.87"),
+            OffsetDateTime.parse("2007-12-03T10:15:30+01:00"),
+            None,
+            None
+          )
+        )
         a <- assetRepo.create(
           Asset(
             id = 0,
@@ -92,18 +93,6 @@ class HomeController @Inject() (
           )
         )
       } yield {
-        depositRepo
-          .create(
-            Deposit(
-              0,
-              p.id,
-              Money("USD 23.87"),
-              OffsetDateTime.parse("2007-12-03T10:15:30+01:00"),
-              None,
-              None
-            )
-          )
-          .map(println)
         println(pa)
       }
 

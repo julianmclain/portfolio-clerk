@@ -52,6 +52,10 @@ v4
 
 Creating a data layer:
 - Play seems to recommend the repository pattern https://www.playframework.com/documentation/2.8.x/ScalaTestingWithScalaTest
+- Without `slick-pg`, Slick will automatically cast `OffsetDateTime` to a VARCHAR(255). `slick-pg` provides a 
+  conversion to the PG TIMESTAMP WITH TIME ZONE type.
+- I started out the project using `joda` time classes. However, according to their docs, `java.time` is 
+    recommended for applications using Java 8 and higher.
 
 Scheduling tasks:
 - akka scheduler https://github.com/enragedginger/akka-quartz-scheduler

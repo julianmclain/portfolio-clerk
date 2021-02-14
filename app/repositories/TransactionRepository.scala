@@ -12,7 +12,7 @@ import slick.lifted.ProvenShape
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
 import models.Transaction
-import models.Money
+import org.joda.money.Money
 import play.api.db.slick.HasDatabaseConfigProvider
 
 import java.time.OffsetDateTime
