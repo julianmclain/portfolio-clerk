@@ -24,7 +24,7 @@ class UserRepository @Inject() (
 
   import ApplicationPostgresProfile.api._
 
-  private class UserTable(tag: Tag)
+  class UserTable(tag: Tag)
       extends Table[User](tag, "users")
       with AutoIncId
       with Timestamps {

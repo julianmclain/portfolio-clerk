@@ -1,18 +1,19 @@
 //package services
 //
-//import models.Money
 //import models.Portfolio
 //import models.PortfolioAsset
 //import models.PortfolioSnapshot
-//import org.joda.time.DateTime
+//import org.joda.money.Money
 //import repositories.PortfolioAssetRepository
 //import repositories.PortfolioRepository
 //import repositories.PortfolioSnapshotRepository
+//import util.GlobalConstants.ROUNDING_MODE
 //
-//import java.time.LocalDate
+//import java.time.OffsetDateTime
 //import javax.inject.Inject
 //import scala.concurrent.ExecutionContext
 //import scala.concurrent.Future
+//import scala.math.BigDecimal.javaBigDecimal2bigDecimal
 //
 //trait PortfolioSnapshotService {
 //
@@ -49,17 +50,18 @@
 //    */
 //  def createPortfolioSnapshot(
 //      portfolio: Portfolio,
-//      currentDate: LocalDate
+//      currentDatetime: OffsetDateTime
 //  ): Future[PortfolioSnapshot] =
 //    for {
 //      lastSnapshot <- getLastSnapshot(portfolio)
 //      portfolioAssets <- portfolioAssetRepo.findAllByPortfolioId(portfolio.id)
 //      netAssetValue <- calculateNetAssetValue(portfolioAssets)
 //      (netCashFlow, numShareChange) =
-//        calculateNetCashFlow(portfolio, lastSnapshot.date)
+//        calculateNetCashFlow(portfolio, lastSnapshot.snapshotDatetime)
 //      openingSharePrice = lastSnapshot.closingSharePrice
 //      currentShareCount = lastSnapshot.closingShareCount + numShareChange
-//      closingSharePrice = netAssetValue.dividedBy(currentShareCount)
+//      closingSharePrice =
+//        netAssetValue.dividedBy(currentShareCount.bigDecimal, ROUNDING_MODE)
 //
 //    } yield {
 //      portfolioSnapshotRepo.create(
@@ -76,14 +78,16 @@
 //          closingValue = netAssetValue,
 //          netReturn =
 //            closingSharePrice.minus(openingSharePrice).getAmount / 100,
-//          snapshotDate = currentDate
+//          snapshotDatetime = currentDatetime,
+//          None,
+//          None
 //        )
 //      )
 //    }
 //
 //  private def calculateNetCashFlow(
 //      portfolio: Portfolio,
-//      since: DateTime
+//      since: OffsetDateTime
 //  ): (Money, BigDecimal) =
 //    ???
 //

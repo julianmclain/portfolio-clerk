@@ -18,7 +18,7 @@ case class PortfolioSnapshot(
     closingSharePrice: Money,
     closingValue: Money,
     netReturn: BigDecimal,
-    snapshotDate: OffsetDateTime,
+    snapshotDatetime: OffsetDateTime,
     createdAt: Option[OffsetDateTime],
     updatedAt: Option[OffsetDateTime]
 )
