@@ -1,18 +1,24 @@
 package repositories
 
 import db.ApplicationPostgresProfile
+import db.ApplicationPostgresProfile.api._
 import db.AutoIncId
 import db.Timestamps
+import models.Asset
 import models.Deposit
 import org.joda.money.Money
 import play.api.db.slick.DatabaseConfigProvider
 import slick.lifted.ProvenShape
+import models.Cash
+import org.joda.money.CurrencyUnit
 
 import javax.inject.Inject
 import javax.inject.Singleton
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import play.api.db.slick.HasDatabaseConfigProvider
+import slick.dbio.Effect
+import slick.sql.FixedSqlAction
 
 import java.time.OffsetDateTime
 
@@ -23,45 +29,84 @@ class DepositRepository @Inject() (
     ec: ExecutionContext
 ) extends HasDatabaseConfigProvider[ApplicationPostgresProfile] {
 
-  import ApplicationPostgresProfile.api._
-
-  private class DepositTable(tag: Tag)
-      extends Table[Deposit](tag, "deposits")
-      with AutoIncId
-      with Timestamps {
-    def portfolioId: Rep[Long] = column[Long]("portfolio_id")
-    def totalAmount: Rep[Money] = column[Money]("total_amount")
-    def depositDateTime: Rep[OffsetDateTime] = {
-      column[OffsetDateTime]("deposit_datetime")
-    }
-
-    def * : ProvenShape[Deposit] =
-      (
-        id,
-        portfolioId,
-        totalAmount,
-        depositDateTime,
-        createdAt,
-        updatedAt
-      ) <> ((Deposit.apply _).tupled, Deposit.unapply)
-  }
-
   private val deposits = TableQuery[DepositTable]
+  private val portfolioAssets = TableQuery[PortfolioAssetTable]
+  private val assets = TableQuery[AssetTable]
 
-  def findById(id: Long): Future[Option[Deposit]] =
-    db.run(deposits.filter(_.id === id).result.headOption)
-
-  def create(deposit: Deposit): Future[Deposit] = {
-    val insertQuery =
+  def test(deposit: Deposit, asset: Asset) = {
+    val insertDeposit =
       deposits returning deposits.map(_.id) into ((record, id) =>
         deposit.copy(
           id = id,
           updatedAt = record.updatedAt,
           createdAt = record.createdAt
         )
-      )
-    val action = insertQuery += deposit
-    db.run(action)
+      ) += deposit
+
+    val insertAsset =
+      assets returning assets.map(_.id) into ((record, id) =>
+        asset.copy(
+          id = id,
+          updatedAt = record.updatedAt,
+          createdAt = record.createdAt
+        )
+      ) += asset
+
+    db.run(insertDeposit andThen insertAsset)
   }
 
+  def findById(id: Long): Future[Option[Deposit]] =
+    db.run(deposits.filter(_.id === id).result.headOption)
+
+  def create(deposit: Deposit): Future[Deposit] = {
+    val insertDeposit: FixedSqlAction[Deposit, NoStream, Effect.Write] =
+      deposits returning deposits.map(_.id) into ((record, id) =>
+        deposit.copy(
+          id = id,
+          updatedAt = record.updatedAt,
+          createdAt = record.createdAt
+        )
+      ) += deposit
+
+    val getCashQuantity = portfolioAssets
+      .filter(record =>
+        record.portfolioId === deposit.portfolioId // && record.assetId == Cash.ASSET_ID
+      )
+      .map(_.quantity)
+      .result
+      .head
+
+    def updateCashQuantity(quantity: BigDecimal) =
+      portfolioAssets
+        .filter(record =>
+          record.portfolioId === deposit.portfolioId // && record.assetId == Cash.ASSET_ID
+        )
+        .map(_.quantity)
+        .update(quantity)
+
+    db.run((getCashQuantity flatMap { quantity =>
+      updateCashQuantity(quantity)
+    } andThen insertDeposit).transactionally)
+  }
+}
+
+private[repositories] class DepositTable(tag: Tag)
+    extends Table[Deposit](tag, "deposits")
+    with AutoIncId
+    with Timestamps {
+  def portfolioId: Rep[Long] = column[Long]("portfolio_id")
+  def totalAmount: Rep[Money] = column[Money]("total_amount")
+  def depositDateTime: Rep[OffsetDateTime] = {
+    column[OffsetDateTime]("deposit_datetime")
+  }
+
+  def * : ProvenShape[Deposit] =
+    (
+      id,
+      portfolioId,
+      totalAmount,
+      depositDateTime,
+      createdAt,
+      updatedAt
+    ) <> ((Deposit.apply _).tupled, Deposit.unapply)
 }
