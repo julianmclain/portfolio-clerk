@@ -9,6 +9,7 @@ scalaVersion := "2.13.3"
 
 libraryDependencies += guice
 libraryDependencies += evolutions
+libraryDependencies += ws
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0" % Test
 libraryDependencies += "org.mockito" % "mockito-scala_2.13" % "1.16.23"
 // db stuff

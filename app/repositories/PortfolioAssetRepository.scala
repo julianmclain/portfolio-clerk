@@ -1,6 +1,7 @@
 package repositories
 
 import db.ApplicationPostgresProfile
+import db.ApplicationPostgresProfile.api._
 import db.Timestamps
 import models.PortfolioAsset
 import play.api.db.slick.DatabaseConfigProvider
@@ -18,29 +19,10 @@ class PortfolioAssetRepository @Inject() (
 )(implicit
     ec: ExecutionContext
 ) extends HasDatabaseConfigProvider[ApplicationPostgresProfile] {
-  import ApplicationPostgresProfile.api._
 
-  private class PortfolioAssetTable(tag: Tag)
-      extends Table[PortfolioAsset](tag, "portfolio_assets")
-      with Timestamps {
-    def id: Rep[Long] = column[Long]("id")
-    def portfolioId: Rep[Long] = column[Long]("portfolio_id")
-    def assetId: Rep[Long] = column[Long]("asset_id")
-    def quantity: Rep[BigDecimal] = column[BigDecimal]("quantity")
-    primaryKey("id", (portfolioId, assetId))
-    def * : ProvenShape[PortfolioAsset] =
-      (
-        id,
-        portfolioId,
-        assetId,
-        quantity,
-        createdAt,
-        updatedAt
-      ) <> ((PortfolioAsset.apply _).tupled, PortfolioAsset.unapply)
-  }
+  val portfolioAssets = TableQuery[PortfolioAssetTable]
 
-  private val portfolioAssets = TableQuery[PortfolioAssetTable]
-
+  // TODO - not tested
   def findAllByPortfolioId(portfolioId: Long): Future[Seq[PortfolioAsset]] =
     db.run(portfolioAssets.filter(_.portfolioId === portfolioId).result)
 
@@ -56,4 +38,25 @@ class PortfolioAssetRepository @Inject() (
     val action = insertQuery += portfolioAsset
     db.run(action)
   }
+}
+
+class PortfolioAssetTable(tag: Tag)
+  extends Table[PortfolioAsset](tag, "portfolio_assets")
+    with Timestamps {
+  def id: Rep[Long] = column[Long]("id")
+  def portfolioId: Rep[Long] = column[Long]("portfolio_id")
+  def assetId: Rep[Long] = column[Long]("asset_id")
+  def quantity: Rep[BigDecimal] = column[BigDecimal]("quantity")
+  primaryKey("id", (portfolioId, assetId))
+  def assset = foreignKey("asset_fk", assetId, AssetRepository.assets)
+//  def portfolio = foreignKey()
+  def * : ProvenShape[PortfolioAsset] =
+    (
+      id,
+      portfolioId,
+      assetId,
+      quantity,
+      createdAt,
+      updatedAt
+    ) <> ((PortfolioAsset.apply _).tupled, PortfolioAsset.unapply)
 }

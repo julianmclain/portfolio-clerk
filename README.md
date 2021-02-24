@@ -84,5 +84,6 @@ Splitting up dev / prod application conf
 
 ## TODO
 
+- stock splits and dividends
 - setup docker-compose for postgres
 - setup `sbt test` to only run unit tests and `sbt it:test` to run integration tests http://craigthomas.ca/blog/2015/05/08/play-framework-custom-integration-test-configuration/

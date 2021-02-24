@@ -45,7 +45,7 @@ class AssetRepository @Inject() (
       ) <> ((Asset.apply _).tupled, Asset.unapply)
   }
 
-  private val assets = TableQuery[AssetTable]
+  val assets = TableQuery[AssetTable]
 
   def findById(id: Long): Future[Option[Asset]] =
     db.run(assets.filter(_.id === id).result.headOption)

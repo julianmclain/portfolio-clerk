@@ -8,7 +8,7 @@ import play.api.db.slick.DatabaseConfigProvider
 import javax.inject.Inject
 import javax.inject.Singleton
 import slick.lifted.ProvenShape
-import models.PortfolioSnapshot
+import models.{Portfolio, PortfolioSnapshot}
 import org.joda.money.Money
 import play.api.db.slick.HasDatabaseConfigProvider
 
@@ -72,6 +72,10 @@ class PortfolioSnapshotRepository @Inject() (
 
   def findById(id: Long): Future[Option[PortfolioSnapshot]] =
     db.run(portfolioSnapshots.filter(_.id === id).result.headOption)
+
+  // TODO - not tested
+  def getLastSnapshot(portfolio: Portfolio): Future[Option[PortfolioSnapshot]] =
+    db.run(portfolioSnapshots.filter(_.portfolioId === portfolio.id).sortBy(_.snapshotDatetime).result.headOption)
 
   def create(
       portfolioSnapshot: PortfolioSnapshot
