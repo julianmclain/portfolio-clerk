@@ -10,7 +10,7 @@ case object Stock extends AssetType
 case object Bond extends AssetType
 case object OptionContract extends AssetType
 case object Cash extends AssetType {
-  val ID = 1
+  val ASSET_ID = 1L
 }
 
 case class Asset(

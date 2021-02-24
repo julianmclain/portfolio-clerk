@@ -60,12 +60,31 @@ class HomeController @Inject() (
         p <- portfolioRepo.create(
           Portfolio(0, u.id, "Test portfolio", None, None)
         )
-        d <- depositRepo.create(
+//        d <- depositRepo.create(
+//          Deposit(
+//            0,
+//            p.id,
+//            Money.parse("USD 23.87"),
+//            OffsetDateTime.parse("2007-12-03T10:15:30+01:00"),
+//            None,
+//            None
+//          )
+//        )
+        d <- depositRepo.test(
           Deposit(
             0,
             p.id,
-            Money.parse("USD 23.87"),
+            Money.parse("USD 9999.87"),
             OffsetDateTime.parse("2007-12-03T10:15:30+01:00"),
+            None,
+            None
+          ),
+          Asset(
+            id = 0,
+            portfolioId = p.id,
+            assetName = "Test stock",
+            assetSymbol = "TST",
+            assetType = Stock,
             None,
             None
           )
@@ -83,7 +102,6 @@ class HomeController @Inject() (
         )
         pa <- portfolioAssetRepo.create(
           PortfolioAsset(
-            0,
             portfolioId = p.id,
             assetId = a.id,
             quantity = 1,

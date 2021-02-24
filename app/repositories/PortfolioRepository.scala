@@ -22,7 +22,7 @@ class PortfolioRepository @Inject() (
 ) extends HasDatabaseConfigProvider[ApplicationPostgresProfile] {
   import ApplicationPostgresProfile.api._
 
-  private class PortfolioTable(tag: Tag)
+  class PortfolioTable(tag: Tag)
       extends Table[Portfolio](tag, "portfolios")
       with AutoIncId
       with Timestamps {

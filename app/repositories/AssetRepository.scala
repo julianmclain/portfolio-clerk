@@ -1,6 +1,7 @@
 package repositories
 
 import db.ApplicationPostgresProfile
+import db.ApplicationPostgresProfile.api._
 import db.AutoIncId
 import db.Timestamps
 import models.Asset
@@ -22,29 +23,6 @@ class AssetRepository @Inject() (
     ec: ExecutionContext
 ) extends HasDatabaseConfigProvider[ApplicationPostgresProfile] {
 
-  import ApplicationPostgresProfile.api._
-
-  private class AssetTable(tag: Tag)
-      extends Table[Asset](tag, "assets")
-      with AutoIncId
-      with Timestamps {
-    def portfolioId: Rep[Long] = column[Long]("portfolio_id")
-    def assetName: Rep[String] = column[String]("asset_name")
-    def assetSymbol: Rep[String] = column[String]("asset_symbol")
-    def assetType: Rep[AssetType] = column[AssetType]("asset_type")
-
-    def * : ProvenShape[Asset] =
-      (
-        id,
-        portfolioId,
-        assetName,
-        assetSymbol,
-        assetType,
-        createdAt,
-        updatedAt
-      ) <> ((Asset.apply _).tupled, Asset.unapply)
-  }
-
   private val assets = TableQuery[AssetTable]
 
   def findById(id: Long): Future[Option[Asset]] =
@@ -62,4 +40,25 @@ class AssetRepository @Inject() (
     val action = insertQuery += asset
     db.run(action)
   }
+}
+
+private[repositories] class AssetTable(tag: Tag)
+    extends Table[Asset](tag, "assets")
+    with AutoIncId
+    with Timestamps {
+  def portfolioId: Rep[Long] = column[Long]("portfolio_id")
+  def assetName: Rep[String] = column[String]("asset_name")
+  def assetSymbol: Rep[String] = column[String]("asset_symbol")
+  def assetType: Rep[AssetType] = column[AssetType]("asset_type")
+
+  def * : ProvenShape[Asset] =
+    (
+      id,
+      portfolioId,
+      assetName,
+      assetSymbol,
+      assetType,
+      createdAt,
+      updatedAt
+    ) <> ((Asset.apply _).tupled, Asset.unapply)
 }

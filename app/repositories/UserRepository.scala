@@ -1,6 +1,7 @@
 package repositories
 
 import db.ApplicationPostgresProfile
+import db.ApplicationPostgresProfile.api._
 import db.AutoIncId
 import db.Timestamps
 import play.api.db.slick.DatabaseConfigProvider
@@ -10,6 +11,8 @@ import javax.inject.Singleton
 import slick.lifted.ProvenShape
 import models.User
 import play.api.db.slick.HasDatabaseConfigProvider
+import slick.lifted.Rep
+import slick.lifted.Tag
 
 import java.time.OffsetDateTime
 import scala.concurrent.Future
@@ -21,26 +24,6 @@ class UserRepository @Inject() (
 )(implicit
     ec: ExecutionContext
 ) extends HasDatabaseConfigProvider[ApplicationPostgresProfile] {
-
-  import ApplicationPostgresProfile.api._
-
-  class UserTable(tag: Tag)
-      extends Table[User](tag, "users")
-      with AutoIncId
-      with Timestamps {
-    def email: Rep[String] = column[String]("email")
-    def signupDatetime: Rep[OffsetDateTime] =
-      column[OffsetDateTime]("signup_datetime")
-
-    def * : ProvenShape[User] =
-      (
-        id,
-        email,
-        signupDatetime,
-        createdAt,
-        updatedAt
-      ) <> ((User.apply _).tupled, User.unapply)
-  }
 
   private val users = TableQuery[UserTable]
 
@@ -59,4 +42,22 @@ class UserRepository @Inject() (
     val action = insertQuery += user
     db.run(action)
   }
+}
+
+protected[repositories] class UserTable(tag: Tag)
+    extends Table[User](tag, "users")
+    with AutoIncId
+    with Timestamps {
+  def email: Rep[String] = column[String]("email")
+  def signupDatetime: Rep[OffsetDateTime] =
+    column[OffsetDateTime]("signup_datetime")
+
+  def * : ProvenShape[User] =
+    (
+      id,
+      email,
+      signupDatetime,
+      createdAt,
+      updatedAt
+    ) <> ((User.apply _).tupled, User.unapply)
 }
