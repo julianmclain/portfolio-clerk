@@ -9,7 +9,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait FinancialDataClient {
 
-  def getClosingStockPrice(ticker: String, date: LocalDate): Future[Either[FinancialDataClientError, Money]]
+  def getClosingStockPrice(
+      ticker: String,
+      date: LocalDate
+  ): Future[Either[FinancialDataClientError, BigMoney]]
 }
 
 case class FinancialDataClientError(msg: String)
@@ -17,9 +20,14 @@ case class FinancialDataClientError(msg: String)
 /**
   * https://polygon.io/docs/get_v1_open-close__stocksTicker___date__anchor
   */
-class PolygonClient @Inject()(
-wsClient: WSClient
-)(implicit ec: ExecutionContext) extends FinancialDataClient {
+class PolygonClient @Inject() (
+    wsClient: WSClient
+)(implicit ec: ExecutionContext)
+    extends FinancialDataClient {
 
-  def getClosingStockPrice(ticker: String, date: LocalDate): Future[Either[FinancialDataClientError, Money]] = Future.successful(Right(BigMoney.of(CurrencyUnit.USD, 0)))
+  def getClosingStockPrice(
+      ticker: String,
+      date: LocalDate
+  ): Future[Either[FinancialDataClientError, BigMoney]] =
+    Future.successful(Right(BigMoney.of(CurrencyUnit.USD, 0)))
 }

@@ -3,11 +3,16 @@ package services
 import models.Portfolio
 import models.PortfolioAsset
 import models.PortfolioSnapshot
-import org.joda.money.{BigMoney, CurrencyUnit, Money}
-import repositories.{AssetRepository, PortfolioAssetRepository, PortfolioRepository, PortfolioSnapshotRepository}
-import util.GlobalConstants.{GLOBAL_ROUNDING_MODE, GLOBAL_TZ_OFFSET}
+import org.joda.money.BigMoney
+import org.joda.money.CurrencyUnit
+import repositories.AssetRepository
+import repositories.DepositRepository
+import repositories.PortfolioAssetRepository
+import repositories.PortfolioSnapshotRepository
+import repositories.WithdrawalRepository
+import util.GlobalConstants.GLOBAL_ROUNDING_MODE
 
-import java.time.{OffsetDateTime, ZoneId, ZoneOffset}
+import java.time.OffsetDateTime
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
@@ -19,24 +24,24 @@ trait PortfolioSnapshotService {
     * Calculate a point in time snapshot of the portfolio value
     */
   def createPortfolioSnapshot(
-      portfolio: Portfolio
-  ): Future[PortfolioSnapshot]
+      portfolio: Portfolio,
+      currentDateTime: OffsetDateTime
+  ): Future[Either[PortfolioSnapshotError, PortfolioSnapshot]]
 
 }
 
+case class PortfolioSnapshotError(message: String)
+
 class PortfolioSnapshotServiceImpl @Inject() (
-                                             assetRepo: AssetRepository,
-                                             polygonClient: PolygonClient,
-    portfolioRepo: PortfolioRepository,
+    assetRepo: AssetRepository,
+    depositRepo: DepositRepository,
+    withdrawalRepo: WithdrawalRepository,
+    fdClient: FinancialDataClient,
     portfolioSnapshotRepo: PortfolioSnapshotRepository,
     portfolioAssetRepo: PortfolioAssetRepository
 )(implicit ec: ExecutionContext)
-    extends PortfolioService {
+    extends PortfolioSnapshotService {
 
-  case class SnapshotError(message: String)
-  private val initialShareCount = BigDecimal(1000)
-  private val initialSnapshotDatetime = OffsetDateTime.now(GLOBAL_TZ_OFFSET)
-  private val initialSharePrice = BigMoney.of(CurrencyUnit.USD, 10)
   /**
     * v1 assumes that this method will be called 1 time per day once after-hours trading closes.
     *
@@ -55,59 +60,100 @@ class PortfolioSnapshotServiceImpl @Inject() (
   def createPortfolioSnapshot(
       portfolio: Portfolio,
       currentDatetime: OffsetDateTime
-  ): Future[PortfolioSnapshot] =
+  ): Future[Either[PortfolioSnapshotError, PortfolioSnapshot]] =
     portfolioSnapshotRepo.getLastSnapshot(portfolio).flatMap {
-      case Some(prev) => createIncrementalSnapshot(portfolio, prev, currentDatetime)
-      case None => createFirstSnapshot()
+      case Some(prev) =>
+        createIncrementalSnapshot(portfolio, prev, currentDatetime)
+      case None => createFirstSnapshot(portfolio, currentDatetime)
     }
+
+  /**
+    * If no snapshot taken before
+    * - Get all deposit and withdrawals
+    * -
+    * @param portfolio
+    * @param currentDatetime
+    * @return
+    */
+  private def createFirstSnapshot(
+      portfolio: Portfolio,
+      currentDatetime: OffsetDateTime
+  ): Future[Either[PortfolioSnapshotError, PortfolioSnapshot]] = {
+//    for {
+//      deposits <- depo
+//    }
+    Future.successful(Left(PortfolioSnapshotError("stuff")))
+  }
+
+  private def createIncrementalSnapshot(
+      portfolio: Portfolio,
+      prevSnapshot: PortfolioSnapshot,
+      currentDatetime: OffsetDateTime
+  ): Future[Either[PortfolioSnapshotError, PortfolioSnapshot]] = {
+    val netAssetValueOrErrorFt = for {
+      portfolioAssets <- portfolioAssetRepo.findAllByPortfolioId(portfolio.id)
+      navOrError <- calculateNetAssetValue(portfolioAssets)
+    } yield navOrError
+
+    val (netCashFlow, numShareChange) =
+      calculateNetCashFlow(portfolio, prevSnapshot.snapshotDatetime)
+    val openingSharePrice = prevSnapshot.closingSharePrice
+    val currentShareCount = prevSnapshot.closingShareCount + numShareChange
+
+    netAssetValueOrErrorFt.flatMap {
+      case Right(nav) => {
+        val closingSharePrice = nav.dividedBy(
+          currentShareCount.bigDecimal,
+          GLOBAL_ROUNDING_MODE
+        )
+        portfolioSnapshotRepo
+          .create(
+            PortfolioSnapshot(
+              id = 0,
+              portfolioId = portfolio.id,
+              openingShareCount = prevSnapshot.closingShareCount,
+              openingSharePrice = openingSharePrice,
+              openingValue = prevSnapshot.closingValue,
+              netCashFlow = netCashFlow,
+              numShareChange = numShareChange,
+              closingShareCount = currentShareCount,
+              closingSharePrice = closingSharePrice,
+              closingValue = nav,
+              netReturn =
+                closingSharePrice.minus(openingSharePrice).getAmount / 100,
+              snapshotDatetime = currentDatetime,
+              None,
+              None
+            )
+          )
+          .map(Right(_))
+      }
+      case Left(error) => Future.successful(Left(error))
+    }
+  }
 
   private def calculateNetCashFlow(
       portfolio: Portfolio,
       since: OffsetDateTime
-  ): (Money, BigDecimal) =
+  ): (BigMoney, BigDecimal) =
     ???
 
   private def calculateNetAssetValue(
       portfolioAssets: Seq[PortfolioAsset]
-  ): Future[Either[SnapshotError, Money]] = {
+  ): Future[Either[PortfolioSnapshotError, BigMoney]] = {
     val rv = portfolioAssets.map { portfolioAsset =>
       assetRepo.findById(portfolioAsset.assetId).flatMap {
-        case Some(asset) => Future.successful(Right(Money.of(CurrencyUnit.USD, 0)))
-        case None => Future.successful(Left(SnapshotError("No asset")))
+        case Some(asset) =>
+          Future.successful(Right(BigMoney.of(CurrencyUnit.USD, 0)))
+        case None => Future.successful(Left(PortfolioSnapshotError("No asset")))
       }
-  }
-    Future.successful(Right(Money.of(CurrencyUnit.USD, 0)))
-  }
-  //    } yield Money.of(CurrencyUnit.USD, 10)).foldLeft(Money.of(CurrencyUnit.USD, 0))((sum, next) => sum.plus(next))
-  private def createFirstSnapshot(): Future[PortfolioSnapshot] = ???
-
-  private def createIncrementalSnapshot(portfolio: Portfolio, prevSnapshot: PortfolioSnapshot, currentDatetime: OffsetDateTime): Future[PortfolioSnapshot] =
-    for {
-      portfolioAssets <- portfolioAssetRepo.findAllByPortfolioId(portfolio.id)
-      netAssetValue <- calculateNetAssetValue(portfolioAssets)
-      (netCashFlow, numShareChange) = calculateNetCashFlow(portfolio, prevSnapshot.snapshotDatetime)
-      openingSharePrice = prevSnapshot.closingSharePrice
-      currentShareCount = prevSnapshot.closingShareCount + numShareChange
-      closingSharePrice = netAssetValue.dividedBy(currentShareCount.bigDecimal, GLOBAL_ROUNDING_MODE)
-    } yield {
-      portfolioSnapshotRepo.create(
-        PortfolioSnapshot(
-          id = 0,
-          portfolioId = portfolio.id,
-          openingShareCount = prevSnapshot.closingShareCount,
-          openingSharePrice = openingSharePrice,
-          openingValue = prevSnapshot.closingValue,
-          netCashFlow = netCashFlow,
-          numShareChange = numShareChange,
-          closingShareCount = currentShareCount,
-          closingSharePrice = closingSharePrice,
-          closingValue = netAssetValue,
-          netReturn =
-            closingSharePrice.minus(openingSharePrice).getAmount / 100,
-          snapshotDatetime = currentDatetime,
-          None,
-          None
-        )
-      )
     }
+    Future.successful(Right(BigMoney.of(CurrencyUnit.USD, 0)))
+  }
+
+  object PortfolioSnapshotServiceImpl {
+    // Starting share price will always be $100. The starting share count
+    // will be determined by NAV / $100
+    private val initialSharePrice = BigMoney.of(CurrencyUnit.USD, 100)
+  }
 }

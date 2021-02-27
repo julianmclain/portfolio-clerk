@@ -2,15 +2,13 @@ package repositories
 
 import db.ApplicationPostgresProfile
 import db.ApplicationPostgresProfile.api._
-import db.AutoIncId
-import db.Timestamps
+import db.AutoIncIdColumn
+import db.TimestampColumns
 import models.Asset
 import models.Deposit
-import org.joda.money.Money
+import org.joda.money.BigMoney
 import play.api.db.slick.DatabaseConfigProvider
 import slick.lifted.ProvenShape
-import models.Cash
-import org.joda.money.CurrencyUnit
 
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -92,11 +90,11 @@ class DepositRepository @Inject() (
 
 private[repositories] class DepositTable(tag: Tag)
     extends Table[Deposit](tag, "deposits")
-    with AutoIncId
-    with Timestamps {
+    with AutoIncIdColumn
+    with TimestampColumns {
   def portfolioId: Rep[Long] = column[Long]("portfolio_id")
-  def totalAmount: Rep[Money] = column[Money]("total_amount")
-  def depositDateTime: Rep[OffsetDateTime] = {
+  def totalAmount: Rep[BigMoney] = column[BigMoney]("total_amount")
+  def depositDatetime: Rep[OffsetDateTime] = {
     column[OffsetDateTime]("deposit_datetime")
   }
 
@@ -105,7 +103,7 @@ private[repositories] class DepositTable(tag: Tag)
       id,
       portfolioId,
       totalAmount,
-      depositDateTime,
+      depositDatetime,
       createdAt,
       updatedAt
     ) <> ((Deposit.apply _).tupled, Deposit.unapply)

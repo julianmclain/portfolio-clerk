@@ -1,8 +1,8 @@
 package repositories
 
 import db.ApplicationPostgresProfile
-import db.AutoIncId
-import db.Timestamps
+import db.AutoIncIdColumn
+import db.TimestampColumns
 import play.api.db.slick.DatabaseConfigProvider
 
 import javax.inject.Inject
@@ -25,8 +25,8 @@ class ReferenceAssetRepository @Inject() (
 
   private class ReferenceAssetTable(tag: Tag)
       extends Table[ReferenceAsset](tag, "reference_assets")
-      with AutoIncId
-      with Timestamps {
+      with AutoIncIdColumn
+      with TimestampColumns {
     def name: Rep[String] = column[String]("name")
     def symbol: Rep[String] = column[String]("symbol")
     def * : ProvenShape[ReferenceAsset] =

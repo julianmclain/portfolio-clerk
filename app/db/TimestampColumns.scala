@@ -5,7 +5,7 @@ import slick.relational.RelationalProfile
 
 import java.time.OffsetDateTime
 
-trait Timestamps { self: RelationalProfile#Table[_] =>
+trait TimestampColumns { self: RelationalProfile#Table[_] =>
   def createdAt: Rep[Option[OffsetDateTime]] =
     column[Option[OffsetDateTime]]("created_at", O.AutoInc)
   def updatedAt: Rep[Option[OffsetDateTime]] =

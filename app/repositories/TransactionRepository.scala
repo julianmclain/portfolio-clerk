@@ -1,8 +1,8 @@
 package repositories
 
 import db.ApplicationPostgresProfile
-import db.AutoIncId
-import db.Timestamps
+import db.AutoIncIdColumn
+import db.TimestampColumns
 import play.api.db.slick.DatabaseConfigProvider
 
 import javax.inject.Inject
@@ -12,7 +12,7 @@ import slick.lifted.ProvenShape
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
 import models.Transaction
-import org.joda.money.Money
+import org.joda.money.BigMoney
 import play.api.db.slick.HasDatabaseConfigProvider
 
 import java.time.OffsetDateTime
@@ -28,13 +28,13 @@ class TransactionRepository @Inject() (
 
   private class TransactionTable(tag: Tag)
       extends Table[Transaction](tag, "transactions")
-      with AutoIncId
-      with Timestamps {
+      with AutoIncIdColumn
+      with TimestampColumns {
     def portfolioId: Rep[Long] = column[Long]("portfolio_id")
     def portfolioAssetId: Rep[Long] = column[Long]("portfolio_asset_id")
     def quantity: Rep[BigDecimal] = column[BigDecimal]("quantity")
-    def unitPrice: Rep[Money] = column[Money]("unit_price")
-    def totalValue: Rep[Money] = column[Money]("total_value")
+    def unitPrice: Rep[BigMoney] = column[BigMoney]("unit_price")
+    def totalValue: Rep[BigMoney] = column[BigMoney]("total_value")
     def transactionDatetime: Rep[OffsetDateTime] =
       column[OffsetDateTime]("transaction_datetime")
 

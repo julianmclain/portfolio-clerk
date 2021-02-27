@@ -30,6 +30,15 @@ CREATE TABLE IF NOT EXISTS deposits (
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
 );
 
+CREATE TABLE IF NOT EXISTS withdrawals (
+    id BIGSERIAL PRIMARY KEY,
+    portfolio_id BIGINT NOT NULL REFERENCES portfolios(id),
+    total_amount VARCHAR(510) NOT NULL,
+    withdrawal_datetime TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
+);
+
 CREATE TABLE IF NOT EXISTS portfolio_snapshots (
     id BIGSERIAL PRIMARY KEY,
     portfolio_id BIGINT NOT NULL REFERENCES portfolios(id),
@@ -83,6 +92,7 @@ CREATE TABLE IF NOT EXISTS transactions (
 # --- !Downs
 
 DROP TABLE IF EXISTS deposits;
+DROP TABLE IF EXISTS withdrawals;
 DROP TABLE IF EXISTS portfolio_snapshots;
 DROP TABLE IF EXISTS transactions;
 DROP TABLE IF EXISTS portfolio_assets;

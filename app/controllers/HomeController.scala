@@ -7,6 +7,7 @@ import models.PortfolioAsset
 import models.PortfolioSnapshot
 import models.Stock
 import models.User
+import org.joda.money.BigMoney
 import org.joda.money.Money
 
 import javax.inject._
@@ -74,7 +75,7 @@ class HomeController @Inject() (
           Deposit(
             0,
             p.id,
-            Money.parse("USD 9999.87"),
+            BigMoney.parse("USD 9999.87"),
             OffsetDateTime.parse("2007-12-03T10:15:30+01:00"),
             None,
             None

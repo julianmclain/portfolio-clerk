@@ -1,6 +1,6 @@
 package models
 
-import org.joda.money.Money
+import org.joda.money.BigMoney
 import play.api.libs.json.Json
 import play.api.libs.json.OFormat
 
@@ -11,8 +11,8 @@ case class Transaction(
     portfolioId: Long,
     portfolioAssetId: Long,
     quantity: BigDecimal,
-    unitPrice: Money,
-    totalValue: Money,
+    unitPrice: BigMoney,
+    totalValue: BigMoney,
     transactionDatetime: OffsetDateTime,
     createdAt: Option[OffsetDateTime],
     updatedAt: Option[OffsetDateTime]

@@ -7,13 +7,14 @@ import models.Stock
 import slick.ast.BaseTypedType
 import slick.jdbc.JdbcType
 import com.github.tminglei.slickpg.ExPostgresProfile.api._
+import org.joda.money.BigMoney
 import org.joda.money.Money
 
 trait ApplicationCustomMappings {
-  implicit val moneyMapper: JdbcType[Money] with BaseTypedType[Money] =
-    MappedColumnType.base[Money, String](
-      money => money.toString,
-      str => Money.parse(str)
+  implicit val bigMoneyMapper: JdbcType[BigMoney] with BaseTypedType[BigMoney] =
+    MappedColumnType.base[BigMoney, String](
+      bigMoney => bigMoney.toString,
+      str => BigMoney.parse(str)
     )
 
   implicit val assetTypeMapper

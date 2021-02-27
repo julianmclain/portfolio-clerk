@@ -1,14 +1,15 @@
 package repositories
 
 import db.ApplicationPostgresProfile
-import db.AutoIncId
-import db.Timestamps
+import db.AutoIncIdColumn
+import db.TimestampColumns
 import play.api.db.slick.DatabaseConfigProvider
 
 import javax.inject.Inject
 import javax.inject.Singleton
 import slick.lifted.ProvenShape
 import models.{Portfolio, PortfolioSnapshot}
+import org.joda.money.BigMoney
 import org.joda.money.Money
 import play.api.db.slick.HasDatabaseConfigProvider
 
@@ -27,21 +28,21 @@ class PortfolioSnapshotRepository @Inject() (
 
   private class PortfolioSnapshotTable(tag: Tag)
       extends Table[PortfolioSnapshot](tag, "portfolio_snapshots")
-      with AutoIncId
-      with Timestamps {
+      with AutoIncIdColumn
+      with TimestampColumns {
     def portfolioId: Rep[Long] = column[Long]("portfolio_id")
     def openingShareCount: Rep[BigDecimal] =
       column[BigDecimal]("opening_share_count")
-    def openingSharePrice: Rep[Money] =
-      column[Money]("opening_share_price")
-    def openingValue: Rep[Money] = column[Money]("opening_value")
-    def netCashFlow: Rep[Money] = column[Money]("net_cash_flow")
+    def openingSharePrice: Rep[BigMoney] =
+      column[BigMoney]("opening_share_price")
+    def openingValue: Rep[BigMoney] = column[BigMoney]("opening_value")
+    def netCashFlow: Rep[BigMoney] = column[BigMoney]("net_cash_flow")
     def numShareChange: Rep[BigDecimal] = column[BigDecimal]("num_share_change")
     def closingShareCount: Rep[BigDecimal] =
       column[BigDecimal]("closing_share_count")
-    def closingSharePrice: Rep[Money] =
-      column[Money]("closing_share_price")
-    def closingValue: Rep[Money] = column[Money]("closing_value")
+    def closingSharePrice: Rep[BigMoney] =
+      column[BigMoney]("closing_share_price")
+    def closingValue: Rep[BigMoney] = column[BigMoney]("closing_value")
     def netReturn: Rep[BigDecimal] = column[BigDecimal]("net_return")
     def snapshotDatetime: Rep[OffsetDateTime] =
       column[OffsetDateTime]("snapshot_datetime")
@@ -75,7 +76,13 @@ class PortfolioSnapshotRepository @Inject() (
 
   // TODO - not tested
   def getLastSnapshot(portfolio: Portfolio): Future[Option[PortfolioSnapshot]] =
-    db.run(portfolioSnapshots.filter(_.portfolioId === portfolio.id).sortBy(_.snapshotDatetime).result.headOption)
+    db.run(
+      portfolioSnapshots
+        .filter(_.portfolioId === portfolio.id)
+        .sortBy(_.snapshotDatetime)
+        .result
+        .headOption
+    )
 
   def create(
       portfolioSnapshot: PortfolioSnapshot

@@ -2,8 +2,8 @@ package repositories
 
 import db.ApplicationPostgresProfile
 import db.ApplicationPostgresProfile.api._
-import db.AutoIncId
-import db.Timestamps
+import db.AutoIncIdColumn
+import db.TimestampColumns
 import play.api.db.slick.DatabaseConfigProvider
 
 import javax.inject.Inject
@@ -46,8 +46,8 @@ class UserRepository @Inject() (
 
 protected[repositories] class UserTable(tag: Tag)
     extends Table[User](tag, "users")
-    with AutoIncId
-    with Timestamps {
+    with AutoIncIdColumn
+    with TimestampColumns {
   def email: Rep[String] = column[String]("email")
   def signupDatetime: Rep[OffsetDateTime] =
     column[OffsetDateTime]("signup_datetime")

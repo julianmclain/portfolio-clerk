@@ -1,6 +1,6 @@
 package models
 
-import org.joda.money.Money
+import org.joda.money.BigMoney
 import play.api.libs.json.Json
 import play.api.libs.json.OFormat
 
@@ -10,13 +10,13 @@ case class PortfolioSnapshot(
     id: Long,
     portfolioId: Long,
     openingShareCount: BigDecimal,
-    openingSharePrice: Money,
-    openingValue: Money,
-    netCashFlow: Money,
+    openingSharePrice: BigMoney,
+    openingValue: BigMoney,
+    netCashFlow: BigMoney,
     numShareChange: BigDecimal,
     closingShareCount: BigDecimal,
-    closingSharePrice: Money,
-    closingValue: Money,
+    closingSharePrice: BigMoney,
+    closingValue: BigMoney,
     netReturn: BigDecimal,
     snapshotDatetime: OffsetDateTime,
     createdAt: Option[OffsetDateTime],
