@@ -10,12 +10,12 @@ case object Stock extends AssetType
 case object Bond extends AssetType
 case object OptionContract extends AssetType
 case object Cash extends AssetType {
+  // To make life easier I guarantee that Cash is the first Asset loaded into the database
   val ASSET_ID = 1L
 }
 
 case class Asset(
     id: Long,
-    portfolioId: Long,
     assetName: String,
     assetSymbol: String,
     assetType: AssetType,

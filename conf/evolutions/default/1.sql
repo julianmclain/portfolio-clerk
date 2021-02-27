@@ -59,7 +59,6 @@ CREATE TABLE IF NOT EXISTS portfolio_snapshots (
 
 CREATE TABLE IF NOT EXISTS assets (
     id BIGSERIAL PRIMARY KEY,
-    portfolio_id BIGINT NOT NULL REFERENCES portfolios(id),
     asset_name VARCHAR(510),
     asset_symbol VARCHAR(510),
     asset_type VARCHAR(510),
@@ -68,7 +67,6 @@ CREATE TABLE IF NOT EXISTS assets (
 );
 
 CREATE TABLE IF NOT EXISTS portfolio_assets (
-    id BIGSERIAL NOT NULL,
     portfolio_id BIGINT NOT NULL REFERENCES portfolios(id),
     asset_id BIGINT NOT NULL REFERENCES assets(id),
     quantity NUMERIC,

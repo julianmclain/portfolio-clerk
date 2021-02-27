@@ -82,7 +82,6 @@ class HomeController @Inject() (
           ),
           Asset(
             id = 0,
-            portfolioId = p.id,
             assetName = "Test stock",
             assetSymbol = "TST",
             assetType = Stock,
@@ -93,7 +92,6 @@ class HomeController @Inject() (
         a <- assetRepo.create(
           Asset(
             id = 0,
-            portfolioId = p.id,
             assetName = "Apple stock",
             assetSymbol = "AAPL",
             assetType = Stock,

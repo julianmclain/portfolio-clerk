@@ -5,6 +5,7 @@ import db.ApplicationPostgresProfile.api._
 import db.AutoIncIdColumn
 import db.TimestampColumns
 import models.Asset
+import models.Cash
 import models.Deposit
 import org.joda.money.BigMoney
 import play.api.db.slick.DatabaseConfigProvider
@@ -68,7 +69,7 @@ class DepositRepository @Inject() (
 
     val getCashQuantity = portfolioAssets
       .filter(record =>
-        record.portfolioId === deposit.portfolioId // && record.assetId == Cash.ASSET_ID
+        record.portfolioId === deposit.portfolioId // TODO - fix this: && record.assetId == Cash.ASSET_ID
       )
       .map(_.quantity)
       .result

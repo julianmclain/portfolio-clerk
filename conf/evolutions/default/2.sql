@@ -32,10 +32,10 @@ INSERT INTO deposits (portfolio_id, total_amount) VALUES (1, 'USD 5000');
 --
 --        );
 
-INSERT INTO assets (portfolio_id, asset_name, asset_symbol, asset_type)
-VALUES (1, 'Cash', '$', 'Cash');
-INSERT INTO assets (portfolio_id, asset_name, asset_symbol, asset_type)
-VALUES (1, 'Apple', 'AAPL', 'Stock');
+INSERT INTO assets (asset_name, asset_symbol, asset_type)
+VALUES ('Cash', 'CASH', 'Cash');
+INSERT INTO assets (asset_name, asset_symbol, asset_type)
+VALUES ('Apple', 'AAPL', 'Stock');
 
 INSERT INTO portfolio_assets (portfolio_id, asset_id, quantity)
 VALUES (1, 1, 5000);

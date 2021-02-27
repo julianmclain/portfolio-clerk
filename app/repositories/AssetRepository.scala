@@ -46,7 +46,6 @@ private[repositories] class AssetTable(tag: Tag)
     extends Table[Asset](tag, "assets")
     with AutoIncIdColumn
     with TimestampColumns {
-  def portfolioId: Rep[Long] = column[Long]("portfolio_id")
   def assetName: Rep[String] = column[String]("asset_name")
   def assetSymbol: Rep[String] = column[String]("asset_symbol")
   def assetType: Rep[AssetType] = column[AssetType]("asset_type")
@@ -54,7 +53,6 @@ private[repositories] class AssetTable(tag: Tag)
   def * : ProvenShape[Asset] =
     (
       id,
-      portfolioId,
       assetName,
       assetSymbol,
       assetType,
