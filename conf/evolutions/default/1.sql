@@ -14,9 +14,7 @@ CREATE TABLE IF NOT EXISTS portfolios (
     id BIGSERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL REFERENCES users(id),
     name VARCHAR(510),
-    share_count NUMERIC,
-    share_price VARCHAR(510),
-    total_value VARCHAR(510),
+    cash_balance VARCHAR(510),
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
 );

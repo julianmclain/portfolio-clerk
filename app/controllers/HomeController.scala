@@ -1,6 +1,7 @@
 package controllers
 
 import models.Asset
+import models.AssetSymbol
 import models.Deposit
 import models.Portfolio
 import models.PortfolioAsset
@@ -8,7 +9,6 @@ import models.PortfolioSnapshot
 import models.Stock
 import models.User
 import org.joda.money.BigMoney
-import org.joda.money.Money
 
 import javax.inject._
 import play.api.mvc.BaseController
@@ -19,7 +19,10 @@ import repositories.PortfolioAssetRepository
 import repositories.PortfolioRepository
 import repositories.PortfolioSnapshotRepository
 import repositories.UserRepository
+import services.FinancialDataClient
+import services.PortfolioSnapshotService
 
+import java.time.LocalDate
 import java.time.OffsetDateTime
 import scala.concurrent.ExecutionContext
 
@@ -35,7 +38,9 @@ class HomeController @Inject() (
     val depositRepo: DepositRepository,
     val portfolioSnapshotRepo: PortfolioSnapshotRepository,
     val assetRepo: AssetRepository,
-    val portfolioAssetRepo: PortfolioAssetRepository
+    val portfolioAssetRepo: PortfolioAssetRepository,
+    val portfolioSnapshotService: PortfolioSnapshotService,
+    val fd: FinancialDataClient
 )(implicit ec: ExecutionContext)
     extends BaseController {
 
@@ -59,8 +64,16 @@ class HomeController @Inject() (
           )
         )
         p <- portfolioRepo.create(
-          Portfolio(0, u.id, "Test portfolio", None, None)
+          Portfolio(
+            0,
+            u.id,
+            "Test portfolio",
+            BigMoney.parse("USD 1000"),
+            None,
+            None
+          )
         )
+        p2 <- portfolioRepo.findById(1L)
 //        d <- depositRepo.create(
 //          Deposit(
 //            0,
@@ -82,8 +95,8 @@ class HomeController @Inject() (
           ),
           Asset(
             id = 0,
-            assetName = "Test stock",
-            assetSymbol = "TST",
+            name = "Test stock",
+            assetSymbol = AssetSymbol("TST"),
             assetType = Stock,
             None,
             None
@@ -92,8 +105,8 @@ class HomeController @Inject() (
         a <- assetRepo.create(
           Asset(
             id = 0,
-            assetName = "Apple stock",
-            assetSymbol = "AAPL",
+            name = "Apple stock",
+            assetSymbol = AssetSymbol("AAPL"),
             assetType = Stock,
             None,
             None
@@ -108,10 +121,14 @@ class HomeController @Inject() (
             None
           )
         )
+        stuff <- portfolioAssetRepo.findAssetQuantities(1L)
+        snapshot <- portfolioSnapshotService.createPortfolioSnapshot(
+          p2.get,
+          OffsetDateTime.parse("2021-02-25T11:03:18.770996-08:00")
+        )
       } yield {
-        println(pa)
+        println(snapshot)
       }
-
       Ok(views.html.index())
     }
 }

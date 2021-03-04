@@ -1,5 +1,10 @@
 # Portfolio Clerk
 
+## Immediate todo
+- There's an issue with creating portfolio snapshots, it's returning nothing
+  - try to validate the return value in some way. It should at least be an error
+  - issue: right now the calculate nav function isn't taking quantity into account
+
 ## Calculating your portfolio's rate of return 
 
 Calculating your portfolio's rate of return is easy unless there are cash inflows / outflows during the period. If 
@@ -32,8 +37,6 @@ Solution - The goal is to replace spreadsheets like [this](https://docs.google.c
     Then manually construct your repo instance and pass in the db config provider. See https://github.com/dnvriend/slick-3.2.0-test/blob/f5bfe8c9e29ba122f852a6e069b168581ab58ef7/play-slick/src/main/scala/play/api/db/slick/DatabaseConfigProvider.scala#L6
   - need to clean the DB between tests. I think the application automatically runs ups on application create and 
     downs on application teardown. Might just need a before test / after test hook to truncate tables. Not sure
-- create withdrawal table
-- create deposit table
 
 v1
 - [ ] ability to register as a user
@@ -62,7 +65,7 @@ v5
 
 ## Notes
 
-Creating a data layer:
+### Creating a data layer:
 - Play seems to recommend the repository pattern https://www.playframework.com/documentation/2.8.x/ScalaTestingWithScalaTest
 - Without `slick-pg`, Slick will automatically cast `OffsetDateTime` to a VARCHAR(255). `slick-pg` provides an implicit 
   conversion to the PG TIMESTAMP WITH TIME ZONE type.
@@ -75,15 +78,31 @@ Creating a data layer:
   - https://github.com/joesan/plant-simulator/tree/master/test/com/inland24/plantsim/services/database
   - https://stackoverflow.com/a/42392849
   
+- TODO: base repository https://stackoverflow.com/questions/48953857/play-slick-repository-pattern
 
-Scheduling tasks:
+### Scheduling tasks:
 - akka scheduler https://github.com/enragedginger/akka-quartz-scheduler
 
-Splitting up dev / prod application conf
+### Splitting up dev / prod application conf
 - https://sysgears.com/articles/how-to-configure-your-application-for-different-environments-with-play-framework/
+
+### Playing around in the sbt console
+
+```scala
+import play.api._
+val env     = Environment(new java.io.File("."), this.getClass.getClassLoader, Mode.Dev)
+val context = ApplicationLoader.Context.create(env)
+val loader  = ApplicationLoader(context)
+val app     = loader.load(context)
+Play.start(app)
+// get an instance of a class:
+val fd = app.injector.instanceOf[SimpleFinancialDataClient]
+```
+
+Read more about guice here https://www.baeldung.com/guice
 
 ## TODO
 
-- stock splits and dividends
+- how to handle stock splits and dividends
 - setup docker-compose for postgres
 - setup `sbt test` to only run unit tests and `sbt it:test` to run integration tests http://craigthomas.ca/blog/2015/05/08/play-framework-custom-integration-test-configuration/

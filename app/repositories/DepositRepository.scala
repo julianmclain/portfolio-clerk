@@ -5,7 +5,6 @@ import db.ApplicationPostgresProfile.api._
 import db.AutoIncIdColumn
 import db.TimestampColumns
 import models.Asset
-import models.Cash
 import models.Deposit
 import org.joda.money.BigMoney
 import play.api.db.slick.DatabaseConfigProvider
@@ -57,6 +56,24 @@ class DepositRepository @Inject() (
   def findById(id: Long): Future[Option[Deposit]] =
     db.run(deposits.filter(_.id === id).result.headOption)
 
+  def findAllByPortfolioId(
+      portfolioId: Long,
+      since: Option[OffsetDateTime] = None
+  ): Future[Seq[Deposit]] =
+    since match {
+      case Some(cutoffDatetime) =>
+        db.run(
+          deposits
+            .filter(deposit =>
+              deposit.portfolioId === portfolioId && deposit.depositDatetime > cutoffDatetime
+            )
+            .result
+        )
+      case None =>
+        db.run(deposits.filter(_.portfolioId === portfolioId).result)
+    }
+
+  // TODO - this needs to be completely re-written now that cash is no longer an asset
   def create(deposit: Deposit): Future[Deposit] = {
     val insertDeposit: FixedSqlAction[Deposit, NoStream, Effect.Write] =
       deposits returning deposits.map(_.id) into ((record, id) =>
@@ -68,9 +85,7 @@ class DepositRepository @Inject() (
       ) += deposit
 
     val getCashQuantity = portfolioAssets
-      .filter(record =>
-        record.portfolioId === deposit.portfolioId // TODO - fix this: && record.assetId == Cash.ASSET_ID
-      )
+      .filter(record => record.portfolioId === deposit.portfolioId)
       .map(_.quantity)
       .result
       .head

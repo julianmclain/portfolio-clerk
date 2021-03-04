@@ -50,6 +50,23 @@ class WithdrawalRepository @Inject() (
   def findById(id: Long): Future[Option[Withdrawal]] =
     db.run(withdrawals.filter(_.id === id).result.headOption)
 
+  def findAllByPortfolioId(
+      portfolioId: Long,
+      since: Option[OffsetDateTime] = None
+  ): Future[Seq[Withdrawal]] =
+    since match {
+      case Some(cutoffDatetime) =>
+        db.run(
+          withdrawals
+            .filter(withdrawal =>
+              withdrawal.portfolioId === portfolioId && withdrawal.withdrawalDatetime > cutoffDatetime
+            )
+            .result
+        )
+      case None =>
+        db.run(withdrawals.filter(_.portfolioId === portfolioId).result)
+    }
+
   def create(withdrawal: Withdrawal): Future[Withdrawal] = {
     val insertQuery =
       withdrawals returning withdrawals.map(_.id) into ((record, id) =>

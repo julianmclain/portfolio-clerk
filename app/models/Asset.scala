@@ -9,15 +9,13 @@ sealed trait AssetType
 case object Stock extends AssetType
 case object Bond extends AssetType
 case object OptionContract extends AssetType
-case object Cash extends AssetType {
-  // To make life easier I guarantee that Cash is the first Asset loaded into the database
-  val ASSET_ID = 1L
-}
+
+case class AssetSymbol(value: String) extends AnyVal
 
 case class Asset(
     id: Long,
-    assetName: String,
-    assetSymbol: String,
+    name: String,
+    assetSymbol: AssetSymbol,
     assetType: AssetType,
     createdAt: Option[OffsetDateTime],
     updatedAt: Option[OffsetDateTime]

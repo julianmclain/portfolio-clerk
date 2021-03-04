@@ -4,10 +4,16 @@
 # --- !Ups
 
 INSERT INTO users (email) VALUES ('julio@gmail.com');
-
-INSERT INTO portfolios (user_id, name, share_count, share_price, total_value) VALUES (1, 'Test portfolio', 1000, 'USD 10', 'USD 10000');
-
+INSERT INTO portfolios (user_id, name, cash_balance) VALUES (1, 'Test portfolio', 'USD 10');
 INSERT INTO deposits (portfolio_id, total_amount) VALUES (1, 'USD 5000');
+INSERT INTO assets (asset_name, asset_symbol, asset_type)
+VALUES ('Snowflake', 'SNOW', 'Stock');
+INSERT INTO assets (asset_name, asset_symbol, asset_type)
+VALUES ('Apple', 'AAPL', 'Stock');
+INSERT INTO portfolio_assets (portfolio_id, asset_id, quantity)
+VALUES (1, 1, 10);
+INSERT INTO portfolio_assets (portfolio_id, asset_id, quantity)
+VALUES (1, 2, 100);
 
 -- INSERT INTO portfolio_snapshots (
 --     portfolio_id,
@@ -31,16 +37,6 @@ INSERT INTO deposits (portfolio_id, total_amount) VALUES (1, 'USD 5000');
 --         'USD 9990',
 --
 --        );
-
-INSERT INTO assets (asset_name, asset_symbol, asset_type)
-VALUES ('Cash', 'CASH', 'Cash');
-INSERT INTO assets (asset_name, asset_symbol, asset_type)
-VALUES ('Apple', 'AAPL', 'Stock');
-
-INSERT INTO portfolio_assets (portfolio_id, asset_id, quantity)
-VALUES (1, 1, 5000);
-INSERT INTO portfolio_assets (portfolio_id, asset_id, quantity)
-VALUES (1, 2, 100);
 --
 -- INSERT INTO transactions (portfolio_id, portfolio_asset_id, quantity, unit_price, total_value)
 -- VALUES (1, 1, 5000, 'USD 1', 'USD 5000');

@@ -5,6 +5,7 @@ import db.ApplicationPostgresProfile.api._
 import db.AutoIncIdColumn
 import db.TimestampColumns
 import models.Asset
+import models.AssetSymbol
 import models.AssetType
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.db.slick.HasDatabaseConfigProvider
@@ -47,7 +48,7 @@ private[repositories] class AssetTable(tag: Tag)
     with AutoIncIdColumn
     with TimestampColumns {
   def assetName: Rep[String] = column[String]("asset_name")
-  def assetSymbol: Rep[String] = column[String]("asset_symbol")
+  def assetSymbol: Rep[AssetSymbol] = column[AssetSymbol]("asset_symbol")
   def assetType: Rep[AssetType] = column[AssetType]("asset_type")
 
   def * : ProvenShape[Asset] =

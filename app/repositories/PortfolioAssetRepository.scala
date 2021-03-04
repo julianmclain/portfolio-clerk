@@ -3,9 +3,13 @@ package repositories
 import db.ApplicationPostgresProfile
 import db.ApplicationPostgresProfile.api._
 import db.TimestampColumns
+import models.Asset
+import models.AssetSymbol
+import models.Portfolio
 import models.PortfolioAsset
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.db.slick.HasDatabaseConfigProvider
+import slick.lifted.ForeignKeyQuery
 import slick.lifted.ProvenShape
 
 import javax.inject.Inject
@@ -21,10 +25,19 @@ class PortfolioAssetRepository @Inject() (
 ) extends HasDatabaseConfigProvider[ApplicationPostgresProfile] {
 
   private val portfolioAssets = TableQuery[PortfolioAssetTable]
+  private val assets = TableQuery[AssetTable]
 
-  // TODO - not tested
-  def findAllByPortfolioId(portfolioId: Long): Future[Seq[PortfolioAsset]] =
-    db.run(portfolioAssets.filter(_.portfolioId === portfolioId).result)
+  def findAssetQuantities(
+      portfolioId: Long
+  ): Future[Seq[(AssetSymbol, BigDecimal)]] = {
+    val query = for {
+      portfolioAsset <- portfolioAssets
+      if portfolioAsset.portfolioId === portfolioId
+      asset <- portfolioAsset.asset
+    } yield (asset.assetSymbol, portfolioAsset.quantity)
+
+    db.run(query.result)
+  }
 
   def create(portfolioAsset: PortfolioAsset): Future[PortfolioAsset] = {
     val insertQuery =
@@ -45,10 +58,19 @@ class PortfolioAssetRepository @Inject() (
 private[repositories] class PortfolioAssetTable(tag: Tag)
     extends Table[PortfolioAsset](tag, "portfolio_assets")
     with TimestampColumns {
+
+  private val assets = TableQuery[AssetTable]
+  private val portfolios = TableQuery[PortfolioTable]
+
   def portfolioId: Rep[Long] = column[Long]("portfolio_id")
   def assetId: Rep[Long] = column[Long]("asset_id")
   def quantity: Rep[BigDecimal] = column[BigDecimal]("quantity")
+  def portfolio: ForeignKeyQuery[PortfolioTable, Portfolio] =
+    foreignKey("portfolio_fk", portfolioId, portfolios)(_.id)
+  def asset: ForeignKeyQuery[AssetTable, Asset] =
+    foreignKey("asset_fk", assetId, assets)(_.id)
   primaryKey("id", (portfolioId, assetId))
+
   def * : ProvenShape[PortfolioAsset] =
     (
       portfolioId,
