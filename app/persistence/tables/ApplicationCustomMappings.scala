@@ -1,14 +1,14 @@
-package db
+package persistence.tables
 
+import com.github.tminglei.slickpg.ExPostgresProfile.api._
+import models.AssetSymbol
 import models.AssetType
 import models.Bond
 import models.OptionContract
 import models.Stock
+import org.joda.money.BigMoney
 import slick.ast.BaseTypedType
 import slick.jdbc.JdbcType
-import com.github.tminglei.slickpg.ExPostgresProfile.api._
-import models.AssetSymbol
-import org.joda.money.BigMoney
 
 trait ApplicationCustomMappings {
   implicit val assetSymbolMapper

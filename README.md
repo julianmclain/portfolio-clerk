@@ -2,8 +2,8 @@
 
 ## Immediate todo
 - There's an issue with creating portfolio snapshots, it's returning nothing
-  - try to validate the return value in some way. It should at least be an error
-  - issue: right now the calculate nav function isn't taking quantity into account
+  - Start by getting the unit tests going
+  - current issue: the calculate nav function isn't taking quantity into account
 
 ## Calculating your portfolio's rate of return 
 
@@ -36,7 +36,7 @@ Solution - The goal is to replace spreadsheets like [this](https://docs.google.c
     dependency injection. Your test suite be injected with a DatabaseConfigProvider for a named database profile. 
     Then manually construct your repo instance and pass in the db config provider. See https://github.com/dnvriend/slick-3.2.0-test/blob/f5bfe8c9e29ba122f852a6e069b168581ab58ef7/play-slick/src/main/scala/play/api/db/slick/DatabaseConfigProvider.scala#L6
   - need to clean the DB between tests. I think the application automatically runs ups on application create and 
-    downs on application teardown. Might just need a before test / after test hook to truncate tables. Not sure
+    downs on application teardown. Might just need a before test / after test hook to truncate persistence.tables. Not sure
 
 v1
 - [ ] ability to register as a user

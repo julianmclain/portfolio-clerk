@@ -9,7 +9,7 @@ import play.api.Configuration
 import play.api.Mode
 import play.api.db.Database
 import play.api.inject.guice.GuiceApplicationBuilder
-import repositories.UserRepository
+import persistence.repositories.UserRepository
 import slick.basic.DatabaseConfig
 import slick.dbio.DBIO
 import slick.jdbc.PostgresProfile
@@ -32,15 +32,14 @@ trait PerSuiteTestApplication extends GuiceOneAppPerSuite with BeforeAndAfter {
 
   before {
     println("before")
-    // TODO - ideally run evolutions / create all the tables here
-    val t: TableQuery[UserRepository#UserTable] =
-      TableQuery[UserRepository#UserTable]
-
-    // not sure why this doesn't work
+    // TODO - ideally run evolutions / create all the persistence.tables here
+    // not sure why this doesn't work:
+//    val t: TableQuery[UserRepository#UserTable] =
+//      TableQuery[UserRepository#UserTable]
 //    database.run(t.filter(_.id === 1).result.headOption)
   }
   after {
-    // TODO - ideally run downs / tear down all the tables here
+    // TODO - ideally run downs / tear down all the persistence.tables here
     println("after")
   }
 }

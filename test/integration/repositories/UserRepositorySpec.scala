@@ -7,7 +7,7 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.Mode
 import play.api.inject.guice.GuiceApplicationBuilder
-import repositories.UserRepository
+import persistence.repositories.UserRepository
 
 import java.time.OffsetDateTime
 import scala.concurrent.Await

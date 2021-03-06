@@ -1,4 +1,4 @@
--- Initial tables
+-- Initial persistence.tables
 
 # --- !Ups
 

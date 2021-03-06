@@ -13,12 +13,12 @@ import org.joda.money.BigMoney
 import javax.inject._
 import play.api.mvc.BaseController
 import play.api.mvc._
-import repositories.AssetRepository
-import repositories.DepositRepository
-import repositories.PortfolioAssetRepository
-import repositories.PortfolioRepository
-import repositories.PortfolioSnapshotRepository
-import repositories.UserRepository
+import persistence.repositories.AssetRepository
+import persistence.repositories.DepositRepository
+import persistence.repositories.PortfolioAssetRepository
+import persistence.repositories.PortfolioRepository
+import persistence.repositories.PortfolioSnapshotRepository
+import persistence.repositories.UserRepository
 import services.FinancialDataClient
 import services.PortfolioSnapshotService
 
@@ -84,24 +84,6 @@ class HomeController @Inject() (
 //            None
 //          )
 //        )
-        d <- depositRepo.test(
-          Deposit(
-            0,
-            p.id,
-            BigMoney.parse("USD 9999.87"),
-            OffsetDateTime.parse("2007-12-03T10:15:30+01:00"),
-            None,
-            None
-          ),
-          Asset(
-            id = 0,
-            name = "Test stock",
-            assetSymbol = AssetSymbol("TST"),
-            assetType = Stock,
-            None,
-            None
-          )
-        )
         a <- assetRepo.create(
           Asset(
             id = 0,

@@ -1,4 +1,4 @@
-package unit.controllers
+package controllers
 
 import controllers.HomeController
 import org.scalatest.Ignore

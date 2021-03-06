@@ -1,35 +1,21 @@
-package repositories
+package persistence.tables
 
-import db.ApplicationPostgresProfile
-import db.AutoIncIdColumn
-import db.TimestampColumns
-import play.api.db.slick.DatabaseConfigProvider
-
-import javax.inject.Inject
-import javax.inject.Singleton
-import slick.lifted.ProvenShape
-
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext
 import models.Transaction
 import org.joda.money.BigMoney
 import play.api.db.slick.HasDatabaseConfigProvider
+import slick.lifted.ProvenShape
 
 import java.time.OffsetDateTime
 
-@Singleton
-class TransactionRepository @Inject() (
-    protected val dbConfigProvider: DatabaseConfigProvider
-)(implicit
-    ec: ExecutionContext
-) extends HasDatabaseConfigProvider[ApplicationPostgresProfile] {
+trait TransactionTableDefinition {
+  this: HasDatabaseConfigProvider[ApplicationPostgresProfile] =>
 
-  import ApplicationPostgresProfile.api._
+  import profile.api._
 
-  private class TransactionTable(tag: Tag)
+  class TransactionTable(tag: Tag)
       extends Table[Transaction](tag, "transactions")
       with AutoIncIdColumn
-      with TimestampColumns {
+      with BaseTableDefinition {
     def portfolioId: Rep[Long] = column[Long]("portfolio_id")
     def portfolioAssetId: Rep[Long] = column[Long]("portfolio_asset_id")
     def quantity: Rep[BigDecimal] = column[BigDecimal]("quantity")
@@ -51,4 +37,5 @@ class TransactionRepository @Inject() (
         updatedAt
       ) <> ((Transaction.apply _).tupled, Transaction.unapply)
   }
+
 }

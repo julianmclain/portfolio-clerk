@@ -2,8 +2,8 @@ package controllers
 
 import play.api.mvc.BaseController
 import play.api.mvc.ControllerComponents
-import repositories.DepositRepository
-import repositories.PortfolioRepository
+import persistence.repositories.DepositRepository
+import persistence.repositories.PortfolioRepository
 
 import javax.inject.Inject
 import javax.inject.Singleton

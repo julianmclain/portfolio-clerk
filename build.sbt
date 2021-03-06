@@ -12,7 +12,7 @@ libraryDependencies += evolutions
 libraryDependencies += ws
 // test stuff
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0" % Test
-libraryDependencies += "org.mockito" % "mockito-scala_2.13" % "1.16.23"
+libraryDependencies += "org.mockito" % "mockito-scala_2.13" % "1.16.29"
 // db stuff
 libraryDependencies += "com.typesafe.play" %% "play-slick" % "5.0.0"
 libraryDependencies += "com.typesafe.play" %% "play-slick-evolutions" % "5.0.0"

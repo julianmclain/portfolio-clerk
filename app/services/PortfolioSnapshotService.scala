@@ -1,15 +1,16 @@
 package services
 
+import com.google.common.annotations.VisibleForTesting
 import com.google.inject.ImplementedBy
+import models.AssetSymbol
 import models.Portfolio
 import models.PortfolioSnapshot
 import org.joda.money.BigMoney
 import org.joda.money.CurrencyUnit
-import repositories.AssetRepository
-import repositories.DepositRepository
-import repositories.PortfolioAssetRepository
-import repositories.PortfolioSnapshotRepository
-import repositories.WithdrawalRepository
+import persistence.repositories.DepositRepository
+import persistence.repositories.PortfolioAssetRepository
+import persistence.repositories.PortfolioSnapshotRepository
+import persistence.repositories.WithdrawalRepository
 import util.GlobalConstants.GLOBAL_ROUNDING_MODE
 
 import java.time.LocalDate
@@ -35,7 +36,6 @@ trait PortfolioSnapshotService {
 }
 
 class PortfolioSnapshotServiceImpl @Inject() (
-    assetRepo: AssetRepository,
     depositRepo: DepositRepository,
     withdrawalRepo: WithdrawalRepository,
     financialDataClient: FinancialDataClient,
@@ -76,6 +76,7 @@ class PortfolioSnapshotServiceImpl @Inject() (
     * is annoyingly small if portfolios are created with a small deposit. I think its better to have a
     * more human friendly share price than share count.
     */
+  @VisibleForTesting
   private def createFirstSnapshot(
       portfolio: Portfolio,
       currentDatetime: OffsetDateTime
@@ -90,7 +91,6 @@ class PortfolioSnapshotServiceImpl @Inject() (
                 if (shareCount > 0) initialSharePrice
                 else BigMoney.of(CurrencyUnit.USD, 0)
               }
-              println(s">>>>>>>>>> nav is $nav")
               portfolioSnapshotRepo
                 .create(
                   PortfolioSnapshot(
@@ -167,7 +167,8 @@ class PortfolioSnapshotServiceImpl @Inject() (
     }
   }
 
-  private def calculateNetCashFlow(
+  @VisibleForTesting
+  private[services] def calculateNetCashFlow(
       portfolio: Portfolio,
       since: Option[OffsetDateTime] = None
   ): Future[BigMoney] = {
@@ -184,16 +185,23 @@ class PortfolioSnapshotServiceImpl @Inject() (
     } yield depositsTotal.minus(withdrawalsTotal)
   }
 
-  private def calculateNetAssetValue(
+  @VisibleForTesting
+  private[services] def calculateNetAssetValue(
       portfolio: Portfolio,
       date: LocalDate
   ): Future[Either[PortfolioSnapshotError, BigMoney]] = {
-    println("calcualte nav")
     val netAssetValueOrErrorFt = for {
       assetQuantities <- portfolioAssetRepo.findAssetQuantities(portfolio.id)
       assetValuesOrErrors <- Future.sequence {
         assetQuantities.map(assetQuantity => {
-          financialDataClient.getClosingStockPrice(assetQuantity._1, date)
+          val assetValue = financialDataClient
+            .getClosingStockPrice(assetQuantity._1, date)
+            .map {
+              case Right(price) =>
+                Right(price.multipliedBy(assetQuantity._2.bigDecimal))
+              case Left(error) => Left(error)
+            }
+          assetValue
         })
       }
     } yield assetValuesOrErrors collectFirst {
@@ -203,7 +211,6 @@ class PortfolioSnapshotServiceImpl @Inject() (
       val sum = assetValues.foldLeft(BigMoney.of(CurrencyUnit.USD, 0))(
         (sum, assetValue) => sum.plus(assetValue)
       )
-      println(sum)
       Right(sum)
     }
     netAssetValueOrErrorFt
