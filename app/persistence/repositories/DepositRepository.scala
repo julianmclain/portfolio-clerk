@@ -1,13 +1,14 @@
 package persistence.repositories
 
 import models.Deposit
+import persistence.ApplicationPostgresProfile
 import play.api.db.slick.DatabaseConfigProvider
+
 import javax.inject.Inject
 import javax.inject.Singleton
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import play.api.db.slick.HasDatabaseConfigProvider
-import persistence.tables.ApplicationPostgresProfile
 import persistence.tables.DepositTableDefinition
 
 import java.time.OffsetDateTime

@@ -2,6 +2,7 @@ package persistence.tables
 
 import models.Transaction
 import org.joda.money.BigMoney
+import persistence.ApplicationPostgresProfile
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.lifted.ProvenShape
 
@@ -15,7 +16,7 @@ trait TransactionTableDefinition {
   class TransactionTable(tag: Tag)
       extends Table[Transaction](tag, "transactions")
       with AutoIncIdColumn
-      with BaseTableDefinition {
+      with TimestampColumns {
     def portfolioId: Rep[Long] = column[Long]("portfolio_id")
     def portfolioAssetId: Rep[Long] = column[Long]("portfolio_asset_id")
     def quantity: Rep[BigDecimal] = column[BigDecimal]("quantity")

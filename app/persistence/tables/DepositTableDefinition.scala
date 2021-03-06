@@ -2,6 +2,7 @@ package persistence.tables
 
 import models.Deposit
 import org.joda.money.BigMoney
+import persistence.ApplicationPostgresProfile
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.lifted.ProvenShape
 
@@ -15,7 +16,7 @@ trait DepositTableDefinition {
   class DepositTable(tag: Tag)
       extends Table[Deposit](tag, "deposits")
       with AutoIncIdColumn
-      with BaseTableDefinition {
+      with TimestampColumns {
     def portfolioId: Rep[Long] = column[Long]("portfolio_id")
     def totalAmount: Rep[BigMoney] = column[BigMoney]("total_amount")
     def depositDatetime: Rep[OffsetDateTime] = {

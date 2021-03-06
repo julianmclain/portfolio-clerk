@@ -3,6 +3,7 @@ package persistence.tables
 import models.Asset
 import models.AssetSymbol
 import models.AssetType
+import persistence.ApplicationPostgresProfile
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.lifted.ProvenShape
 
@@ -14,7 +15,7 @@ trait AssetTableDefinition {
   class AssetTable(tag: Tag)
       extends Table[Asset](tag, "assets")
       with AutoIncIdColumn
-      with BaseTableDefinition {
+      with TimestampColumns {
     def assetName: Rep[String] = column[String]("asset_name")
 
     def assetSymbol: Rep[AssetSymbol] = column[AssetSymbol]("asset_symbol")

@@ -1,9 +1,9 @@
 package persistence.repositories
 
 import models.Asset
+import persistence.ApplicationPostgresProfile
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.db.slick.HasDatabaseConfigProvider
-import persistence.tables.ApplicationPostgresProfile
 
 import javax.inject.Inject
 import javax.inject.Singleton

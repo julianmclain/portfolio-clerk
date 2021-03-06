@@ -2,6 +2,7 @@ package persistence.tables
 
 import models.PortfolioSnapshot
 import org.joda.money.BigMoney
+import persistence.ApplicationPostgresProfile
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.lifted.ProvenShape
 
@@ -15,7 +16,7 @@ trait PortfolioSnapshotTableDefinition {
   class PortfolioSnapshotTable(tag: Tag)
       extends Table[PortfolioSnapshot](tag, "portfolio_snapshots")
       with AutoIncIdColumn
-      with BaseTableDefinition {
+      with TimestampColumns {
     def portfolioId: Rep[Long] = column[Long]("portfolio_id")
     def openingShareCount: Rep[BigDecimal] =
       column[BigDecimal]("opening_share_count")

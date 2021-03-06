@@ -2,6 +2,7 @@ package persistence.tables
 
 import models.Portfolio
 import org.joda.money.BigMoney
+import persistence.ApplicationPostgresProfile
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.lifted.ProvenShape
 
@@ -13,7 +14,7 @@ trait PortfolioTableDefinition {
   class PortfolioTable(tag: Tag)
       extends Table[Portfolio](tag, "portfolios")
       with AutoIncIdColumn
-      with BaseTableDefinition {
+      with TimestampColumns {
     def userId: Rep[Long] = column[Long]("user_id")
 
     def cashBalance: Rep[BigMoney] = column[BigMoney]("cash_balance")

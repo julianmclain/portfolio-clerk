@@ -2,9 +2,9 @@ package persistence.repositories
 
 import models.AssetSymbol
 import models.PortfolioAsset
+import persistence.ApplicationPostgresProfile
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.db.slick.HasDatabaseConfigProvider
-import persistence.tables.ApplicationPostgresProfile
 import persistence.tables.PortfolioAssetTableDefinition
 
 import javax.inject.Inject

@@ -1,11 +1,11 @@
 package persistence.repositories
 
+import persistence.ApplicationPostgresProfile
 import play.api.db.slick.DatabaseConfigProvider
 
 import javax.inject.Inject
 import javax.inject.Singleton
 import play.api.db.slick.HasDatabaseConfigProvider
-import persistence.tables.ApplicationPostgresProfile
 
 import scala.concurrent.ExecutionContext
 

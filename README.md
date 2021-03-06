@@ -1,10 +1,5 @@
 # Portfolio Clerk
 
-## Immediate todo
-- There's an issue with creating portfolio snapshots, it's returning nothing
-  - Start by getting the unit tests going
-  - current issue: the calculate nav function isn't taking quantity into account
-
 ## Calculating your portfolio's rate of return 
 
 Calculating your portfolio's rate of return is easy unless there are cash inflows / outflows during the period. If 
@@ -62,26 +57,9 @@ v4
 
 v5
 - other integrations (maybe Discord)
+- RSS feed type thing or webhook for your trades so they're easy to share with other people
 
 ## Notes
-
-### Creating a data layer:
-- Play seems to recommend the repository pattern https://www.playframework.com/documentation/2.8.x/ScalaTestingWithScalaTest
-- Without `slick-pg`, Slick will automatically cast `OffsetDateTime` to a VARCHAR(255). `slick-pg` provides an implicit 
-  conversion to the PG TIMESTAMP WITH TIME ZONE type.
-- I started out the project using `joda` time classes. However, according to their docs, `java.time` is 
-    recommended for applications using Java 8 and higher.
-- Figuring out unit tests with a test DB is a bitch. Might be a good blog post. Resources used:
-  - https://stackoverflow.com/a/41545948
-  - https://www.pmatiello.me/2014/12/using-a-different-configuration-file-when-running-tests-in-a-play-project.html
-  - https://alexgaribay.com/overwrite-settings-for-testing-in-play-framework/
-  - https://github.com/joesan/plant-simulator/tree/master/test/com/inland24/plantsim/services/database
-  - https://stackoverflow.com/a/42392849
-  
-- TODO: base repository https://stackoverflow.com/questions/48953857/play-slick-repository-pattern
-
-### Scheduling tasks:
-- akka scheduler https://github.com/enragedginger/akka-quartz-scheduler
 
 ### Splitting up dev / prod application conf
 - https://sysgears.com/articles/how-to-configure-your-application-for-different-environments-with-play-framework/
@@ -101,8 +79,16 @@ val fd = app.injector.instanceOf[SimpleFinancialDataClient]
 
 Read more about guice here https://www.baeldung.com/guice
 
-## TODO
+## Example projects for inspiration
+- Linking all of the reference projects that I found useful. I found a bunch of them via Slick docs, Play docs, 
+  Silhouette docs
+- https://github.com/KadekM/play-slick-silhouette-auth-api
+- https://github.com/setusoft/silhouette-play-react-seed (complexish example implementation with React)
+- https://github.com/adamzareba/play-silhouette-rest-slick-reactjs-typescript (simpleish example implementation with 
+  React)
 
-- how to handle stock splits and dividends
+## Future TODO
+
+- research how to handle stock splits and dividends
 - setup docker-compose for postgres
 - setup `sbt test` to only run unit tests and `sbt it:test` to run integration tests http://craigthomas.ca/blog/2015/05/08/play-framework-custom-integration-test-configuration/

@@ -3,6 +3,7 @@ package persistence.tables
 import models.Asset
 import models.Portfolio
 import models.PortfolioAsset
+import persistence.ApplicationPostgresProfile
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.lifted.ForeignKeyQuery
 import slick.lifted.ProvenShape
@@ -16,7 +17,7 @@ trait PortfolioAssetTableDefinition
 
   class PortfolioAssetTable(tag: Tag)
       extends Table[PortfolioAsset](tag, "portfolio_assets")
-      with BaseTableDefinition {
+      with TimestampColumns {
 
     def portfolioId: Rep[Long] = column[Long]("portfolio_id")
     def assetId: Rep[Long] = column[Long]("asset_id")
@@ -37,5 +38,6 @@ trait PortfolioAssetTableDefinition
       ) <> ((PortfolioAsset.apply _).tupled, PortfolioAsset.unapply)
   }
 
-  def portfolioAssets = TableQuery[PortfolioAssetTable]
+  def portfolioAssets: TableQuery[PortfolioAssetTable] =
+    TableQuery[PortfolioAssetTable]
 }

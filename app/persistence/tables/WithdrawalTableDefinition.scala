@@ -2,6 +2,7 @@ package persistence.tables
 
 import models.Withdrawal
 import org.joda.money.BigMoney
+import persistence.ApplicationPostgresProfile
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.lifted.ProvenShape
 
@@ -15,7 +16,7 @@ trait WithdrawalTableDefinition {
   class WithdrawalTable(tag: Tag)
       extends Table[Withdrawal](tag, "withdrawals")
       with AutoIncIdColumn
-      with BaseTableDefinition {
+      with TimestampColumns {
     def portfolioId: Rep[Long] = column[Long]("portfolio_id")
     def totalAmount: Rep[BigMoney] = column[BigMoney]("total_amount")
     def withdrawalDatetime: Rep[OffsetDateTime] = {

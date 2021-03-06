@@ -1,6 +1,7 @@
 package persistence.tables
 
 import models.ReferenceAsset
+import persistence.ApplicationPostgresProfile
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.lifted.ProvenShape
 
@@ -12,7 +13,7 @@ trait ReferenceAssetTableDefinition {
   class ReferenceAssetTable(tag: Tag)
       extends Table[ReferenceAsset](tag, "reference_assets")
       with AutoIncIdColumn
-      with BaseTableDefinition {
+      with TimestampColumns {
     def name: Rep[String] = column[String]("name")
     def symbol: Rep[String] = column[String]("symbol")
     def * : ProvenShape[ReferenceAsset] =

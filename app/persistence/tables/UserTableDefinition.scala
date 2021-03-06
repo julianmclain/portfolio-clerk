@@ -1,6 +1,7 @@
 package persistence.tables
 
 import models.User
+import persistence.ApplicationPostgresProfile
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.lifted.ProvenShape
 
@@ -14,7 +15,7 @@ trait UserTableDefinition {
   class UserTable(tag: Tag)
       extends Table[User](tag, "users")
       with AutoIncIdColumn
-      with BaseTableDefinition {
+      with TimestampColumns {
     def email: Rep[String] = column[String]("email")
     def signupDatetime: Rep[OffsetDateTime] =
       column[OffsetDateTime]("signup_datetime")

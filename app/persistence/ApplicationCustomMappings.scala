@@ -1,4 +1,4 @@
-package persistence.tables
+package persistence
 
 import com.github.tminglei.slickpg.ExPostgresProfile.api._
 import models.AssetSymbol

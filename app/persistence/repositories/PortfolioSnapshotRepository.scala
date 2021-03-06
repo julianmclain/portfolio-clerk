@@ -6,8 +6,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import models.Portfolio
 import models.PortfolioSnapshot
+import persistence.ApplicationPostgresProfile
 import play.api.db.slick.HasDatabaseConfigProvider
-import persistence.tables.ApplicationPostgresProfile
 import persistence.tables.PortfolioSnapshotTableDefinition
 
 import scala.concurrent.Future

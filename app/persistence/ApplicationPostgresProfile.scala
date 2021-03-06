@@ -1,4 +1,4 @@
-package persistence.tables
+package persistence
 
 import com.github.tminglei.slickpg.ExPostgresProfile
 import com.github.tminglei.slickpg.PgDate2Support
