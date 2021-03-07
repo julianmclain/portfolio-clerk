@@ -1,12 +1,9 @@
 package persistence.repositories
 
 import play.api.db.slick.DatabaseConfigProvider
-
 import javax.inject.Inject
 import javax.inject.Singleton
 import models.Portfolio
-import persistence.ApplicationPostgresProfile
-import play.api.db.slick.HasDatabaseConfigProvider
 import persistence.tables.PortfolioTableDefinition
 
 import scala.concurrent.Future
@@ -17,7 +14,7 @@ class PortfolioRepository @Inject() (
     protected val dbConfigProvider: DatabaseConfigProvider
 )(implicit
     ec: ExecutionContext
-) extends HasDatabaseConfigProvider[ApplicationPostgresProfile]
+) extends BaseRepository
     with PortfolioTableDefinition {
 
   import profile.api._

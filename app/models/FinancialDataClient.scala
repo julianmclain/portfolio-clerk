@@ -1,13 +1,12 @@
-package services
+package models
 
 import com.google.inject.ImplementedBy
-import models.AssetSymbol
 import org.joda.money.BigMoney
 
 import java.time.LocalDate
+import scala.concurrent.Future
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.duration.FiniteDuration
-import scala.concurrent.Future
 
 @ImplementedBy(classOf[PolygonClient])
 trait FinancialDataClient {

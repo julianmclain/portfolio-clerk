@@ -1,4 +1,4 @@
-package services
+package models
 
 sealed trait PortfolioSnapshotError {
   def message: String

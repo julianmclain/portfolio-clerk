@@ -1,4 +1,4 @@
-package services
+package persistence.services
 
 import models.AssetSymbol
 import models.Deposit
@@ -23,7 +23,7 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import scala.concurrent.duration.Duration
 
-class PortfolioSnapshotServiceImplSpec
+class PostgresPortfolioSnapshotServiceSpec
     extends PlaySpec
     with IdiomaticMockito
     with Injecting
@@ -41,7 +41,7 @@ class PortfolioSnapshotServiceImplSpec
         mock[PortfolioSnapshotRepository]
       val mockPortfolioAssetRepo: PortfolioAssetRepository =
         mock[PortfolioAssetRepository]
-      val snapshotService = new PortfolioSnapshotServiceImpl(
+      val snapshotService = new PostgresPortfolioSnapshotService(
         depositRepo = mockDepositRepo,
         withdrawalRepo = mockWithdrawalRepo,
         financialDataClient = mockPolygonClient,
@@ -119,7 +119,7 @@ class PortfolioSnapshotServiceImplSpec
 
       val snapshotOrError = Await.result(
         f.snapshotService
-          .createPortfolioSnapshot(f.portfolio, OffsetDateTime.now()),
+          .create(f.portfolio, OffsetDateTime.now()),
         Duration.Inf
       )
       snapshotOrError.isRight mustBe true

@@ -17,7 +17,7 @@ class AssetRepository @Inject() (
     protected val dbConfigProvider: DatabaseConfigProvider
 )(implicit
     ec: ExecutionContext
-) extends HasDatabaseConfigProvider[ApplicationPostgresProfile]
+) extends BaseRepository
     with AssetTableDefinition {
   import profile.api._
 

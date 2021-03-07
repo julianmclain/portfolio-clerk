@@ -3,6 +3,7 @@ package controllers
 import models.Asset
 import models.AssetSymbol
 import models.Deposit
+import models.FinancialDataClient
 import models.Portfolio
 import models.PortfolioAsset
 import models.PortfolioSnapshot
@@ -19,8 +20,7 @@ import persistence.repositories.PortfolioAssetRepository
 import persistence.repositories.PortfolioRepository
 import persistence.repositories.PortfolioSnapshotRepository
 import persistence.repositories.UserRepository
-import services.FinancialDataClient
-import services.PortfolioSnapshotService
+import persistence.services.PortfolioSnapshotService
 
 import java.time.LocalDate
 import java.time.OffsetDateTime
@@ -104,7 +104,7 @@ class HomeController @Inject() (
           )
         )
         stuff <- portfolioAssetRepo.findAssetQuantities(1L)
-        snapshot <- portfolioSnapshotService.createPortfolioSnapshot(
+        snapshot <- portfolioSnapshotService.create(
           p2.get,
           OffsetDateTime.parse("2021-02-25T11:03:18.770996-08:00")
         )

@@ -1,8 +1,10 @@
-package services
+package persistence.services
 
 import com.google.common.annotations.VisibleForTesting
+import models.FinancialDataClient
 import models.Portfolio
 import models.PortfolioSnapshot
+import models.PortfolioSnapshotError
 import org.joda.money.BigMoney
 import org.joda.money.CurrencyUnit
 import persistence.repositories.DepositRepository
@@ -18,7 +20,7 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import scala.math.BigDecimal.javaBigDecimal2bigDecimal
 
-class PortfolioSnapshotServiceImpl @Inject() (
+class PostgresPortfolioSnapshotService @Inject() (
     depositRepo: DepositRepository,
     withdrawalRepo: WithdrawalRepository,
     financialDataClient: FinancialDataClient,
@@ -43,7 +45,7 @@ class PortfolioSnapshotServiceImpl @Inject() (
     *     - closingSharePrice = closingValue / shareCount
     *     - netReturn = (closingSharePrice - openingSharePrice) / 100
     */
-  def createPortfolioSnapshot(
+  def create(
       portfolio: Portfolio,
       currentDatetime: OffsetDateTime
   ): Future[Either[PortfolioSnapshotError, PortfolioSnapshot]] =

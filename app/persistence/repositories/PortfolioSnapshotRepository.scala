@@ -6,8 +6,6 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import models.Portfolio
 import models.PortfolioSnapshot
-import persistence.ApplicationPostgresProfile
-import play.api.db.slick.HasDatabaseConfigProvider
 import persistence.tables.PortfolioSnapshotTableDefinition
 
 import scala.concurrent.Future
@@ -18,7 +16,7 @@ class PortfolioSnapshotRepository @Inject() (
     protected val dbConfigProvider: DatabaseConfigProvider
 )(implicit
     ec: ExecutionContext
-) extends HasDatabaseConfigProvider[ApplicationPostgresProfile]
+) extends BaseRepository
     with PortfolioSnapshotTableDefinition {
 
   import profile.api._

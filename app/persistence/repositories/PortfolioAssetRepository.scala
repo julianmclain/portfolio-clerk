@@ -2,9 +2,7 @@ package persistence.repositories
 
 import models.AssetSymbol
 import models.PortfolioAsset
-import persistence.ApplicationPostgresProfile
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.db.slick.HasDatabaseConfigProvider
 import persistence.tables.PortfolioAssetTableDefinition
 
 import javax.inject.Inject
@@ -17,7 +15,7 @@ class PortfolioAssetRepository @Inject() (
     protected val dbConfigProvider: DatabaseConfigProvider
 )(implicit
     ec: ExecutionContext
-) extends HasDatabaseConfigProvider[ApplicationPostgresProfile]
+) extends BaseRepository
     with PortfolioAssetTableDefinition {
   import profile.api._
 

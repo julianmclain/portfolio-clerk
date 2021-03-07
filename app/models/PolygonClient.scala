@@ -1,6 +1,5 @@
-package services
+package models
 
-import models.AssetSymbol
 import org.joda.money.BigMoney
 import org.joda.money.CurrencyUnit
 import play.api.Configuration

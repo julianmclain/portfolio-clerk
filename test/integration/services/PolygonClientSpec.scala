@@ -7,7 +7,6 @@ import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.api.test.Helpers.baseApplicationBuilder.injector
 import play.api.test.Injecting
-import services.PolygonClient
 
 import java.time.LocalDate
 import scala.concurrent.Await
@@ -19,7 +18,7 @@ class PolygonClientSpec
     with GuiceOneAppPerTest
     with Injecting
     with IdiomaticMockito {
-  "PolygonClient" should {
+  "models.PolygonClient" should {
     "successfully fetch stock price at close" in {
       implicit lazy val ec: ExecutionContext =
         injector.instanceOf[ExecutionContext]
